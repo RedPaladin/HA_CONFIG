@@ -1,0 +1,146 @@
+input_text:
+  cover_floor:
+    name: Cover tilt positions
+    initial: "{}"
+    max: 255  # Max allowed value
+
+script:
+
+  # Parents window - 1st floor
+  cycle_cover_tilt_parents_1st_floor:
+    alias: Cycle cover tilt in 25% steps (1st floor - parents room)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_4
+    mode: single
+
+  # Kids window - 1st floor
+  cycle_cover_tilt_kids_1st_floor:
+    alias: Cycle cover tilt in 25% steps (1st floor - kids room)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_3
+    mode: single
+
+  # Guests window - 1st floor
+  cycle_cover_tilt_guests_1st_floor:
+    alias: Cycle cover tilt in 25% steps (1st floor - guests room)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_5
+    mode: single
+
+  # Group living room - 2nd floor
+  cycle_cover_tilt_all_2nd_floor:
+    alias: Cycle cover tilt in 25% steps (2nd floor - all windows)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt_right_window_2nd_floor
+      - service: script.cycle_cover_tilt_left_window_2nd_floor
+      - service: script.cycle_cover_tilt_large_window_2nd_floor
+      - service: script.cycle_cover_tilt_door_window_2nd_floor
+    mode: single
+
+  # Large window - 2nd floor
+  cycle_cover_tilt_large_window_2nd_floor:
+    alias: Cycle cover tilt in 25% steps (2nd floor - large window)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_balcon_baie_vitree
+    mode: single
+
+  # Right window - 2nd floor
+  cycle_cover_tilt_right_window_2nd_floor:
+    alias: Cycle cover tilt in 25% steps (2nd floor - right window)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io
+    mode: single
+
+  # Left window - 2nd floor
+  cycle_cover_tilt_left_window_2nd_floor:
+    alias: Cycle cover tilt in 25% steps (2nd floor - left window)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_2eme_gauche
+    mode: single
+
+  # Door window - 2nd floor
+  cycle_cover_tilt_door_window_2nd_floor:
+    alias: Cycle cover tilt in 25% steps (2nd floor - door window)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_balcon_porte_fenetre
+    mode: single
+
+  # TV window - 2nd floor
+  cycle_cover_tilt_tv_2nd_floor:
+    alias: Cycle cover tilt in 25% steps (2nd floor - TV room)
+    icon: mdi:blinds
+    sequence:
+      - service: script.cycle_cover_tilt
+        data:
+          cover_entity: cover.my_evb_pro_io_2
+    mode: single
+
+  cycle_cover_tilt:
+    alias: Cycle cover tilt in 0/25/50/100% steps
+    icon: mdi:blinds
+    fields:
+      cover_entity:
+        required: true
+        selector:
+          entity:
+            filter:
+              domain:
+              - cover
+        name: Cover entity
+      force_step:
+        required: false
+        selector:
+          number:
+            min: 0
+            max: 3
+        name: Force step
+    sequence:
+      - variables:
+          cover_floor: "{{ states('input_text.cover_floor') | default('{}') | from_json }}"
+          current_step: >
+            {% if force_step is defined and force_step is not none %}
+              {{ force_step }}
+            {% else %}
+              {{ cover_floor.get(cover_entity, 3) }}
+            {% endif %}
+          tilt_position: >
+            {% if current_step | int == 3 %}
+              100
+            {% else %}
+              {{ current_step | int * 25 }}
+            {% endif %}
+      - service: cover.set_cover_tilt_position
+        data:
+          entity_id: "{{ cover_entity }}"
+          tilt_position: "{{ tilt_position }}"
+      - variables:
+          next_step: "{{ (current_step - 1) if (current_step - 1) >= 0 else 3 }}"
+          updated_steps: >
+            {{ cover_floor | combine({ cover_entity: next_step }) }}
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.cover_floor
+          value: "{{ updated_steps | to_json }}"
+    mode: single

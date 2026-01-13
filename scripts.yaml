@@ -1,0 +1,137 @@
+play_simpson_espanel_living_room:
+  alias: Play Simpson ESPanel Living Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: livingroom
+      song_id: 3624
+  mode: single
+  icon: mdi:music
+play_random_rtttl_song:
+  alias: Play random RTTTL song NSPanel Living Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: livingroom
+  description: ''
+  icon: mdi:music
+play_random_rtttl_song_nspanel_kids_room:
+  alias: Play random RTTTL song NSPanel Kids Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: kids_room
+  description: ''
+  icon: mdi:music
+play_simpson_espanel_kids_room:
+  alias: Play Simpson ESPanel Kids Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: kids_room
+      song_id: 3624
+  mode: single
+  icon: mdi:music
+  description: ''
+play_random_rtttl_song_nspanel_parents_room:
+  alias: Play random RTTTL song NSPanel Parents Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: parents_room
+  description: ''
+  icon: mdi:music
+play_random_rtttl_song_nspanel:
+  alias: Play RTTTL song on NSPanel
+  sequence:
+  - service: mysql_query.query
+    data:
+      query: "{% if song_id -%}\n  {{ 'SELECT title, tones FROM songs WHERE song_id
+        = ' ~ song_id ~ ' LIMIT 1' }}\n{%- else -%}\n  {{ 'SELECT title, tones FROM
+        songs ORDER BY RAND() LIMIT 1' }}\n{%- endif %}\n"
+    response_variable: song
+  - service: '{{ ''esphome.nspanel_'' ~ room_name ~ ''_rtttl_play'' }}'
+    data:
+      tone: '{{ song.result[0][''tones''] }}'
+  description: ''
+  icon: mdi:music
+  mode: queued
+  fields:
+    room_name:
+      required: true
+      selector:
+        select:
+          options:
+          - livingroom
+          - guest_room
+          - kids_room
+          - parents_room
+          - tv_room
+      name: Room name
+    song_id:
+      selector:
+        number:
+      name: Song ID
+      description: Uncheck to play random song
+play_rtttl_everywhere:
+  alias: Play RTTTL song everywhere
+  fields:
+    song_id:
+      selector:
+        number:
+      name: Song ID
+      description: Uncheck to play random song
+  sequence:
+  - parallel:
+    - service: script.play_random_rtttl_song_nspanel
+      metadata: {}
+      data:
+        room_name: livingroom
+        song_id: '{{ song_id }}'
+    - service: script.play_random_rtttl_song_nspanel
+      metadata: {}
+      data:
+        room_name: guest_room
+        song_id: '{{ song_id }}'
+    - service: script.play_random_rtttl_song_nspanel
+      metadata: {}
+      data:
+        room_name: kids_room
+        song_id: '{{ song_id }}'
+    - service: script.play_random_rtttl_song_nspanel
+      metadata: {}
+      data:
+        room_name: parents_room
+        song_id: '{{ song_id }}'
+    - service: script.play_random_rtttl_song_nspanel
+      metadata: {}
+      data:
+        room_name: tv_room
+        song_id: '{{ song_id }}'
+  description: ''
+  icon: mdi:music
+play_random_rtttl_song_nspanel_tv_room:
+  alias: Play random RTTTL song NSPanel TV Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: tv_room
+  description: ''
+  icon: mdi:music
+play_simpson_espanel_tv_room:
+  alias: Play Simpson ESPanel TV Room
+  sequence:
+  - service: script.play_random_rtttl_song_nspanel
+    metadata: {}
+    data:
+      room_name: tv_room
+      song_id: 3624
+  mode: single
+  icon: mdi:music
+  description: ''

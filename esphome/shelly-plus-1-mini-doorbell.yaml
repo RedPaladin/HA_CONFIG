@@ -1,0 +1,39 @@
+substitutions:
+  name: "shelly-plus-1-mini-doorbell"
+  device_name: "Shelly Plus 1 Mini (Doorbell)"
+
+<<: !include templates/shelly-plus-1-mini.yaml
+
+button:
+  - platform: output
+    id: "relay"
+    name: "Ringdoor Relay"
+    output: "relay_output"
+    duration: 500ms
+    icon: mdi:bell
+
+switch:
+  - platform: template
+    id: "ringdoor_mute"
+    name: "Ringdoor Mute"
+    optimistic: True
+    icon: mdi:bell-off
+
+binary_sensor:
+  - platform: gpio
+    name: "Ringdoor Switch"
+    pin: 10
+    on_state:
+      then:
+        - if:
+            condition:
+            - switch.is_off: "ringdoor_mute"
+            then:
+              - button.press: "relay"
+    on_press:
+      then:
+        - homeassistant.event: 
+            event: "esphome.ringdoor_pressed"
+    filters:
+      - delayed_on_off: 50ms
+    

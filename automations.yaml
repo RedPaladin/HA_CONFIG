@@ -1,0 +1,989 @@
+- id: "1710777578394"
+  alias: Heat pump external temp changed
+  description: ""
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.i_regul_heatpump_external_temperature
+  action:
+    - service: lametric.message
+      metadata: {}
+      data:
+        cycles: 1
+        icon_type: none
+        priority: info
+        device_id: ecddb0f90c6306ce66353cd59e573ea4
+        icon: "2422"
+        message: "{{ states('sensor.i_regul_heatpump_external_temperature') }}°"
+  mode: single
+- id: "1712953542885"
+  alias: Sunrise LED blue color
+  description: ""
+  trigger:
+    - platform: sun
+      event: sunrise
+      offset: 0
+  condition: []
+  action:
+    - service: ssh.run_action
+      metadata: {}
+      data:
+        key: change_color
+        variables:
+          color: 1
+      target:
+        device_id:
+          - 1d3ef22821733c3c3c2a6e76fdc218f9
+          - 856d2c6b2824dd53e4dca69f054614d8
+      response_variable: reply
+  mode: single
+- id: "1712953679295"
+  alias: Sunset LED white color
+  description: ""
+  trigger:
+    - platform: sun
+      event: sunset
+      offset: 0
+  condition: []
+  action:
+    - service: ssh.run_action
+      metadata: {}
+      data:
+        key: change_color
+        variables:
+          color: 2
+      target:
+        device_id:
+          - 1d3ef22821733c3c3c2a6e76fdc218f9
+          - 856d2c6b2824dd53e4dca69f054614d8
+      response_variable: reply
+  mode: single
+- id: "1717146378745"
+  alias: NSPanel Living Room Blueprint
+  description: ""
+  use_blueprint:
+    path: Blackymas/nspanel_blueprint.yaml
+    input:
+      nspanel_name: 4e40f3e1ab7ea06b0496e4d004180601
+      weather_entity: weather.weather_at_1400
+      outdoortemp: sensor.i_regul_heatpump_external_temperature
+      timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
+      climate: climate.nspanel_livingroom_thermostat
+      qrcode_enabled: true
+      qrcode_label: U4YRDC4XT4
+      qrcode_value: WIFI:T:WPA;S:Sunrise_Wi-Fi_5E35B5;P:U4YRDC4XT4;;
+      climate_chip_always_visible: false
+      chip_font_size: "8"
+      home_custom_button01: climate.nspanel_livingroom_thermostat
+      home_custom_button02: media_player.cuisine
+      entity01: switch.shelly_plus_1_mini_ringdoor_ringdoor_mute
+      entity01_name: Mute doorbell
+      left_button_entity: script.cycle_cover_tilt_all_2nd_floor
+      left_button_name: Tilt change
+      indoortemp: sensor.nspanel_livingroom_temperature
+      home_value01: sensor.shellyhtg3_5432045661f8_humidity
+      screensaver_display_time: false
+      home_custom_button01_icon: ""
+      home_custom_button03: alarm_control_panel.alarmo
+      home_custom_button03_icon: mdi:shield-lock-outline
+      home_value03_icon: mdi:dishwasher
+      home_value03_label_color:
+        - 200
+        - 204
+        - 200
+      home_value04: sensor.current_power_production
+      home_value04_icon: mdi:sun-angle-outline
+      home_button06_icon: mdi:lightning-bolt
+      entity_page01_label: Electricity
+      entities_entity01: sensor.energy_production_today_2
+      entities_entity02: sensor.energy_consumption_today
+      entities_entity04: sensor.current_power_production
+      entities_entity04_icon: mdi:solar-power
+      entities_entity05: sensor.current_power_consumption
+      entities_entity05_icon: mdi:home-lightning-bolt-outline
+      entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
+      entities_entity07_name: Current net power consumption
+      entities_entity07_icon: mdi:transmission-tower
+      entity_page02_label: Cost
+      entities_entity09: sensor.energy_grid_consumption
+      entities_entity10: sensor.energy_returned_to_grid
+      entities_entity12: sensor.total_daily_cost_energy
+      home_custom_button04: cover.my_evb_pro_io_balcon_porte_fenetre
+      home_custom_button04_icon: mdi:blinds
+      home_custom_button04_name: Porte fenêtre
+      home_custom_button05: cover.stores_2eme_etage
+      home_custom_button05_icon: mdi:blinds
+      home_custom_button05_name: Salon tous
+      left_button_hold_select: Default
+      home_custom_button06: cover.esp32_wroom_32_dev_2_canopy_cover
+      home_custom_button06_icon: mdi:window-closed
+      home_custom_button06_name: Canopy Window
+      chip01: binary_sensor.windows_left_living_room_contact
+      right_button_name: " Xmas tree"
+      home_custom_button03_name: Home Alarm
+      home_value03: sensor.dishwasher_remaining_program_time
+      chip02: binary_sensor.windows_right_living_room_contact
+      alarm: light.wled_kitchen
+      home_custom_button07_icon: mdi:led-strip-variant
+      right_button_entity: switch.hombli_smart_socket_socket_1
+- id: "1717232643461"
+  alias: Wash machine start end cycle detection
+  description: ""
+  use_blueprint:
+    path: Blackshome/appliance-notifications.yaml
+    input:
+      power_sensor: sensor.shelly_plus_pm_mini_reduit1_power
+      start_appliance_power: 20
+      start_time_delay: 3
+      end_appliance_power: 5
+      end_time_delay: 3
+      start_notify_device:
+        - 0bde52060cb2b97e7af7bf939f219956
+      end_notify_device:
+        - fa69e3ce77d50730395698f2456f7188
+      include_end_notify: enable_end_notify_options
+      include_power_tracking: disable_power_tracking
+      include_start_notify: disable_start_notify_options
+      include_time: time_disabled
+      after_time: 08:00:00
+      before_time: "22:00:00"
+      end_custom_actions:
+        - action: switch.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id: switch.shelly_plus_1_mini_reduit_force_fan
+        - action: switch.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id: switch.washing_machine_running
+      include_duration_tracking: enable_duration_tracking
+      global_conditions: []
+      include_custom_actions:
+        - enable_start_custom_actions
+        - enable_end_custom_actions
+      start_custom_actions:
+        - metadata: {}
+          data: {}
+          action: switch.turn_on
+          target:
+            entity_id: switch.shelly_plus_1_mini_reduit_force_fan
+        - action: switch.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: switch.washing_machine_running
+- id: "1719218837510"
+  alias: Ringdoor Notification
+  description: ""
+  triggers:
+    - event_type: esphome.ringdoor_pressed
+      trigger: event
+  conditions: []
+  actions:
+    - action: media_player.play_media
+      data:
+        announce: true
+        media_content_type: music
+        media_content_id: https://home.i234.ch/local/door-bell-sound-simple-0.05.mp3
+      target:
+        entity_id: media_player.g4_dome_speaker
+    - action: camera.snapshot
+      data:
+        filename: /config/www/camera_snapshot.jpg
+      target:
+        entity_id: camera.g4_dome_high_resolution_channel
+    - data:
+        title: "\U0001F514 Ding dong !"
+        message: Someone is at the door
+        data:
+          image:
+            https://home.i234.ch/local/camera_snapshot.jpg?t={{ now().timestamp()
+            }}
+      action: notify.mobile_app_sm_s921b
+  mode: single
+- id: "1720092224522"
+  alias: NSPanel Guest Room Blueprint
+  description: ""
+  use_blueprint:
+    path: Blackymas/nspanel_blueprint.yaml
+    input:
+      nspanel_name: da30966e71f658436421e893c31b87e0
+      weather_entity: weather.weather_at_1400
+      outdoortemp: sensor.i_regul_heatpump_external_temperature
+      timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
+      climate: climate.nspanel_guest_room_thermostat
+      qrcode_enabled: true
+      qrcode_label: U4YRDC4XT4
+      qrcode_value: WIFI:T:WPA;S:Sunrise_Wi-Fi_5E35B5;P:U4YRDC4XT4;;
+      chip_font_size: "8"
+      home_custom_button01: climate.nspanel_guest_room_thermostat
+      home_custom_button01_icon: ""
+      home_indoor_temp_icon: ""
+      home_value04: sensor.current_power_production
+      home_value04_icon: mdi:sun-angle-outline
+      home_button06_icon: mdi:lightning-bolt
+      entity_page01_label: Electricity
+      entities_entity01: sensor.energy_production_today_2
+      entities_entity02: sensor.energy_consumption_today
+      entities_entity04: sensor.current_power_production
+      entities_entity04_icon: mdi:solar-power
+      entities_entity05: sensor.current_power_consumption
+      entities_entity05_icon: mdi:home-lightning-bolt-outline
+      entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
+      entities_entity07_name: Current net power consumption
+      entities_entity07_icon: mdi:transmission-tower
+      entity_page02_label: Cost
+      entities_entity09: sensor.energy_grid_consumption
+      entities_entity10: sensor.energy_returned_to_grid
+      entities_entity12: sensor.total_daily_cost_energy
+      home_custom_button04: cover.my_evb_pro_io_5
+      home_custom_button04_icon: mdi:blinds
+      home_custom_button04_name: Chambre invités
+      home_custom_button06: alarm_control_panel.alarmo
+      home_custom_button06_icon: mdi:shield-lock-outline
+      home_custom_button06_name: Home Alarm
+      left_button_entity: script.cycle_cover_tilt_guests_1st_floor
+      left_button_name: Tilt change
+      right_button_name: " "
+      utilities_enabled: false
+      indoortemp: sensor.nspanel_guest_room_temperature
+      home_value01: sensor.thermometer_guests_room_humidity
+      alarm: switch.switch_guests_room
+      home_custom_button07_icon: mdi:lightbulb
+      home_custom_button05: cover.esp32_wroom_32_dev_2_canopy_cover
+      home_custom_button05_name: Canopy Window
+      home_custom_button05_icon: mdi:window-closed
+- id: "1720449330389"
+  alias: NSPanel Kids Room Blueprint
+  description: ""
+  use_blueprint:
+    path: Blackymas/nspanel_blueprint.yaml
+    input:
+      nspanel_name: 52da761f9f029248aace1bbe2535775a
+      weather_entity: weather.weather_at_1400
+      outdoortemp: sensor.i_regul_heatpump_external_temperature
+      timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
+      climate: climate.nspanel_kids_room_thermostat
+      qrcode_enabled: true
+      qrcode_label: U4YRDC4XT4
+      qrcode_value: WIFI:T:WPA;S:Sunrise_Wi-Fi_5E35B5;P:U4YRDC4XT4;;
+      chip_font_size: "8"
+      home_custom_button01: climate.nspanel_kids_room_thermostat
+      left_button_entity: script.cycle_cover_tilt_kids_1st_floor
+      left_button_name: Tilt change
+      home_indoor_temp_icon: ""
+      home_value04: sensor.current_power_production
+      home_value04_icon: mdi:sun-angle-outline
+      home_button06_icon: mdi:lightning-bolt
+      entity_page01_label: Electricity
+      entities_entity01: sensor.energy_production_today_2
+      entities_entity02: sensor.energy_consumption_today
+      entities_entity04: sensor.current_power_production
+      entities_entity04_icon: mdi:solar-power
+      entities_entity05: sensor.current_power_consumption
+      entities_entity05_icon: mdi:home-lightning-bolt-outline
+      entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
+      entities_entity07_name: Current net power consumption
+      entities_entity07_icon: mdi:transmission-tower
+      entity_page02_label: Cost
+      entities_entity09: sensor.energy_grid_consumption
+      entities_entity10: sensor.energy_returned_to_grid
+      entities_entity12: sensor.total_daily_cost_energy
+      home_custom_button04: cover.my_evb_pro_io_3
+      home_custom_button04_icon: mdi:blinds
+      home_custom_button04_name: Stores enfants
+      home_custom_button05: cover.stores_chambres_parents_enfants
+      home_custom_button05_icon: mdi:blinds
+      home_custom_button05_name: Stores parents/enfants
+      home_custom_button06: alarm_control_panel.alarmo
+      home_custom_button06_icon: mdi:shield-lock-outline
+      home_custom_button06_name: Home Alarm
+      indoortemp: sensor.nspanel_kids_room_temperature
+      home_value01: sensor.0xa4c1381ea5184aab_humidity
+      alarm: light.smart_bulb_kids_room
+      chip01: binary_sensor.windows_kids_room_contact
+      chip02: binary_sensor.windows_parents_room_contact
+      right_button_entity: script.play_random_rtttl_song_nspanel_kids_room
+      right_button_name: Random song
+- id: "1720449359197"
+  alias: NSPanel Parents Room Blueprint
+  description: ""
+  use_blueprint:
+    path: Blackymas/nspanel_blueprint.yaml
+    input:
+      nspanel_name: 2e99f3f030166b30c382ec889a8c46fc
+      weather_entity: weather.weather_at_1400
+      outdoortemp: sensor.i_regul_heatpump_external_temperature
+      timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
+      climate: climate.nspanel_parents_room_thermostat
+      qrcode_enabled: true
+      qrcode_label: U4YRDC4XT4
+      qrcode_value: WIFI:T:WPA;S:Sunrise_Wi-Fi_5E35B5;P:U4YRDC4XT4;;
+      climate_chip_always_visible: false
+      chip_font_size: "8"
+      home_custom_button01: climate.nspanel_parents_room_thermostat
+      entity01: switch.shelly_plus_1_mini_ringdoor_ringdoor_mute
+      entity01_name: Mute doorbell
+      home_custom_button01_icon: ""
+      home_custom_button03_icon: ""
+      entity02: switch.shelly_plus_1_mini_reduit_keep_on
+      entity02_name: Keep on
+      home_indoor_temp_icon: ""
+      home_value03_icon: ""
+      home_value03_label_color:
+        - 200
+        - 200
+        - 200
+      home_value04: sensor.current_power_production
+      home_value04_icon: mdi:sun-angle-outline
+      home_button06_icon: mdi:lightning-bolt
+      entity_page01_label: Electricity
+      entities_entity01: sensor.energy_production_today_2
+      entities_entity02: sensor.energy_consumption_today
+      entities_entity04: sensor.current_power_production
+      entities_entity04_icon: mdi:solar-power
+      entities_entity05: sensor.current_power_consumption
+      entities_entity05_icon: mdi:home-lightning-bolt-outline
+      entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
+      entities_entity07_name: Current net power consumption
+      entities_entity07_icon: mdi:transmission-tower
+      entity_page02_label: Cost
+      entities_entity09: sensor.energy_grid_consumption
+      entities_entity10: sensor.energy_returned_to_grid
+      entities_entity12: sensor.total_daily_cost_energy
+      home_custom_button04: cover.my_evb_pro_io_4
+      home_custom_button04_name: Stores parents
+      home_custom_button04_icon: mdi:blinds
+      home_custom_button05: cover.stores_chambres_parents_enfants
+      home_custom_button05_name: Stores parents/enfants
+      home_custom_button05_icon: mdi:blinds
+      home_custom_button06: alarm_control_panel.alarmo
+      home_custom_button06_icon: mdi:shield-lock-outline
+      home_custom_button06_name: Home Alarm
+      indoortemp: sensor.nspanel_parents_room_temperature
+      home_value01: sensor.0xa4c138fdeee55fff_humidity
+      left_button_entity: script.cycle_cover_tilt_parents_1st_floor
+      left_button_name: Tilt change
+      alarm: light.smart_bulb_parents_room
+      right_button_entity: light.shelly_plus_1_mini_stairs_light_stairs_light
+      right_button_name: Stairs light
+      chip01: binary_sensor.windows_parents_room_contact
+      chip02: binary_sensor.windows_kids_room_contact
+- id: "1721735374228"
+  alias: Electricity tariff week days
+  description: ""
+  trigger:
+    - platform: time
+      at: 06:00:00
+      variables:
+        tariff: high
+    - platform: time
+      at: "22:00:00"
+      variables:
+        tariff: low
+  condition:
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+  action:
+    - service: select.select_option
+      target:
+        entity_id: select.daily_energy_returned_to_grid
+      data:
+        option: "{{ tariff }}"
+    - service: select.select_option
+      target:
+        entity_id: select.daily_energy_grid_consumption
+      data:
+        option: "{{ tariff }}"
+  mode: single
+- id: "1721735847110"
+  alias: Electricity tariff week-end days
+  description: ""
+  trigger:
+    - platform: time
+      at: "10:00:00"
+      variables:
+        tariff: high
+    - platform: time
+      at: "13:00:00"
+      variables:
+        tariff: low
+    - platform: time
+      at: "17:00:00"
+      variables:
+        tariff: high
+    - platform: time
+      at: "22:00:00"
+      variables:
+        tariff: low
+  condition:
+    - condition: time
+      weekday:
+        - sun
+        - sat
+  action:
+    - service: select.select_option
+      target:
+        entity_id: select.daily_energy_returned_to_grid
+      data:
+        option: "{{ tariff }}"
+    - service: select.select_option
+      target:
+        entity_id: select.daily_energy_grid_consumption
+      data:
+        option: "{{ tariff }}"
+  mode: single
+- id: "1723379932834"
+  alias: Play RTTTL song when wash machine cycle completed
+  description: Play music in living room when cycle completed
+  triggers:
+    - event_type: esphome.keep_on_off
+      trigger: event
+      event_data:
+        sender_id: shelly-plus-1-mini-reduit
+  conditions: []
+  actions:
+    - metadata: {}
+      data:
+        room_name: livingroom
+        song_id: 4686
+      action: script.play_random_rtttl_song_nspanel
+  mode: single
+- id: "1723740194817"
+  alias: NSPanel TV Room Blueprint
+  description: ""
+  use_blueprint:
+    path: Blackymas/nspanel_blueprint.yaml
+    input:
+      nspanel_name: 2de2099c873b48ffbe6dbf2b995378b5
+      weather_entity: weather.weather_at_1400
+      outdoortemp: sensor.i_regul_heatpump_external_temperature
+      timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
+      climate: climate.nspanel_tv_room_thermostat
+      qrcode_enabled: true
+      qrcode_label: U4YRDC4XT4
+      qrcode_value: WIFI:T:WPA;S:Sunrise_Wi-Fi_5E35B5;P:U4YRDC4XT4;;
+      chip_font_size: "8"
+      home_custom_button01: climate.nspanel_tv_room_thermostat
+      left_button_entity: script.cycle_cover_tilt_tv_2nd_floor
+      left_button_name: Tilt change
+      home_custom_button01_icon: ""
+      home_indoor_temp_icon: ""
+      home_value03_icon: mdi:television-classic
+      home_value03_label_color:
+        - 255
+        - 255
+        - 255
+      home_value04: sensor.current_power_production
+      home_value04_icon: mdi:sun-angle-outline
+      home_button06_icon: mdi:lightning-bolt
+      entity_page01_label: Electricity
+      entities_entity01: sensor.energy_production_today_2
+      entities_entity02: sensor.energy_consumption_today
+      entities_entity04: sensor.current_power_production
+      entities_entity04_icon: mdi:solar-power
+      entities_entity05: sensor.current_power_consumption
+      entities_entity05_icon: mdi:home-lightning-bolt-outline
+      entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
+      entities_entity07_name: Current net power consumption
+      entities_entity07_icon: mdi:transmission-tower
+      entity_page02_label: Cost
+      entities_entity09: sensor.energy_grid_consumption
+      entities_entity10: sensor.energy_returned_to_grid
+      entities_entity12: sensor.total_daily_cost_energy
+      home_custom_button04: cover.my_evb_pro_io_2
+      home_custom_button04_icon: mdi:blinds
+      home_custom_button04_name: Chambre TV
+      home_custom_button06_icon: ""
+      home_custom_button05: alarm_control_panel.alarmo
+      home_custom_button05_name: Home Alarm
+      indoortemp: sensor.nspanel_tv_room_temperature
+      home_value01: sensor.thermometer_tv_room_humidity
+      alarm: light.smart_bulb_tv_room
+      home_custom_button07_icon: ""
+      chip01: binary_sensor.shelly_plus_1_mini_spare_1_fan_running
+      chip02: binary_sensor.shelly_plus_1_mini_reduit_fan_running
+      home_custom_button05_icon: mdi:shield-lock-outline
+      chip01_icon: mdi:fan
+      chip02_icon: mdi:fan
+      right_button_entity: light.shelly_plus_1pm_mini_tv_room_bracket_lamp
+      right_button_name: TV light
+      home_custom_button02: media_player.piece_a_vivre
+- id: "1733298456777"
+  alias: "\U0001F385 XMas lights"
+  description:
+    Turn on and off the christmas lights depending of the time and day
+    of week
+  triggers:
+    - id: on_all
+      at: 06:00:00
+      trigger: time
+    - id: off_outlet
+      at: 08:30:00
+      trigger: time
+      weekday:
+        - sat
+        - sun
+    - id: off_all
+      at: 08:30:00
+      trigger: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    - id: on_tree
+      at: "11:30:00"
+      trigger: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    - id: off_tree
+      at: "13:00:00"
+      trigger: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    - id: on_all
+      trigger: sun
+      event: sunset
+      offset: -01:00:00
+    - id: off_all
+      at: "23:00:00"
+      trigger: time
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'on_all' }}"
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: group.xmaslights
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'off_all' }}"
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: group.xmaslights
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'on_outlet' }}"
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.shelly_plus_1_mini_terrace_outl_shelly_plus_1_mini_terrace_outlet_outlet
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'off_outlet' }}"
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.shelly_plus_1_mini_terrace_outl_shelly_plus_1_mini_terrace_outlet_outlet
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'on_tree' }}"
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.hombli_smart_socket_socket_1
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'off_tree' }}"
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.hombli_smart_socket_socket_1
+  mode: single
+- id: "1741694468865"
+  alias: Switch Kids Room Smart Bulb Toogle
+  description: ""
+  triggers:
+    - domain: mqtt
+      device_id: 1ee5d526a3d55a577f0a6ed55110d23f
+      type: action
+      subtype: toggle
+      trigger: device
+  conditions: []
+  actions:
+    - type: toggle
+      device_id: 4df2396ea2e6c1b99562aea64599ff19
+      entity_id: 1ac70ab9c3f23b153cc988c5a9f76891
+      domain: light
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+    - condition: state
+      entity_id: light.smart_bulb_kids_room
+      state: "on"
+    - action: esphome.nspanel_kids_room_wake_up
+      metadata: {}
+      data:
+        reset_timer: false
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+    - action: esphome.nspanel_kids_room_entity_details_show
+      metadata: {}
+      data:
+        back_page: home
+        entity: light.smart_bulb_kids_room
+  mode: single
+- id: "1741937975029"
+  alias: Switch TV Room Smart Bulb Toogle
+  description: ""
+  triggers:
+    - domain: mqtt
+      device_id: 0f193714c01beff864653b307aedd336
+      type: action
+      subtype: toggle
+      trigger: device
+  conditions: []
+  actions:
+    - type: toggle
+      device_id: 1c3a0e85080664a8ffbff73c88c732ff
+      entity_id: 6b84830183bdaa376e518735e28871a5
+      domain: light
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+    - condition: state
+      entity_id: light.smart_bulb_tv_room
+      state: "on"
+    - action: esphome.nspanel_tv_room_wake_up
+      metadata: {}
+      data:
+        reset_timer: false
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+    - action: esphome.nspanel_tv_room_entity_details_show
+      metadata: {}
+      data:
+        back_page: home
+        entity: light.smart_bulb_tv_room
+  mode: single
+- id: "1741939111688"
+  alias: Switch Parents Room Smart Bulb Toogle
+  description: ""
+  triggers:
+    - domain: mqtt
+      device_id: 40b0a59bea13802f894287e1b017f19f
+      type: action
+      subtype: toggle
+      trigger: device
+  conditions: []
+  actions:
+    - type: toggle
+      device_id: d22094b56a3fcd8a8c3f0122e13bcea2
+      entity_id: 911eb553f0bff102753579c679e6bcc7
+      domain: light
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+    - condition: state
+      entity_id: light.smart_bulb_parents_room
+      state: "on"
+    - action: esphome.nspanel_parents_room_wake_up
+      metadata: {}
+      data:
+        reset_timer: false
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 500
+    - action: esphome.nspanel_parents_room_entity_details_show
+      metadata: {}
+      data:
+        back_page: home
+        entity: light.smart_bulb_parents_room
+  mode: single
+- id: "1742028116071"
+  alias: Color Loop Kids Room
+  description: ""
+  use_blueprint:
+    path: mdolnik/color_loop.yaml
+    input:
+      light: light.smart_bulb_kids_room
+      helper_toggle: input_boolean.party_lights
+      color_1:
+        - 255
+        - 0
+        - 0
+      color_2:
+        - 174
+        - 0
+        - 255
+      transition:
+        hours: 0
+        minutes: 0
+        seconds: 1
+      color_3:
+        - 0
+        - 238
+        - 255
+      color_4:
+        - 255
+        - 234
+        - 0
+      color_5:
+        - 0
+        - 255
+        - 4
+      color_6:
+        - 17
+        - 0
+        - 255
+- id: "1742028505943"
+  alias: Party with mini button
+  description: ""
+  triggers:
+    - domain: mqtt
+      device_id: 06d340f0184d5e6211d9c3b71706fa38
+      type: action
+      subtype: single
+      metadata: {}
+      trigger: device
+  conditions: []
+  actions:
+    - action: automation.trigger
+      metadata: {}
+      data:
+        skip_condition: true
+      target:
+        entity_id: automation.switch_kids_room_smart_bulb_toogle
+    - if:
+        - condition: state
+          entity_id: light.smart_bulb_kids_room
+          state: "on"
+      then:
+        - action: input_boolean.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: input_boolean.party_lights
+      else:
+        - action: input_boolean.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id: input_boolean.party_lights
+  mode: single
+- id: "1748598239197"
+  alias: Set WC fan delay on
+  description: ""
+  triggers:
+    - at: 06:00:00
+      id: morning_trigger
+      trigger: time
+    - at: "10:00:00"
+      id: late_morning_trigger
+      trigger: time
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: morning_trigger
+          sequence:
+            - target:
+                entity_id: number.shelly_plus_1_mini_spare_1_delay_on
+              data:
+                value: 0
+              action: number.set_value
+        - conditions:
+            - condition: trigger
+              id: late_morning_trigger
+          sequence:
+            - target:
+                entity_id: number.shelly_plus_1_mini_spare_1_delay_on
+              data:
+                value: 90
+              action: number.set_value
+- id: "1762951988568"
+  alias: Cycle started and completed Notification
+  description: ""
+  triggers:
+    - trigger: event
+      event_type: esphome.cycle_started
+    - trigger: event
+      event_type: esphome.cycle_completed
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template:
+                "{{ trigger.event.event_type == 'esphome.cycle_started'
+                and 1 == 0 }}"
+          sequence:
+            - data:
+                title: "{{ trigger.event.data.message }}
+
+                  "
+                message:
+                  '{{ device_name }} sent:  \n* Energy at start: {{ energy_at_start
+                  }}  \n* Epoch at start: {{ start_time }}
+
+                  '
+              action: notify.mobile_app_sm_s921b
+    - choose:
+        - conditions:
+            - condition: template
+              value_template:
+                "{{ trigger.event.event_type == 'esphome.cycle_completed'
+                }}"
+          sequence:
+            - data:
+                title:
+                  "{% if device_name == 'shelly-plus-pm-mini-dish-machin' %}\n  \U0001F37D️
+                  Dishwasher completed !\n{% elif device_name == 'shelly-plus-pm-mini-reduit1'
+                  %}\n  \U0001F455 Washing machine completed !\n{% else %}\n  {{ trigger.event.data.message
+                  }}\n{% endif %}\n"
+                message: "- Duration: {{ time_elapsed }}
+
+                  - Energy used: {{ energy_used }} Wh"
+              action: notify.mobile_app_sm_s921b
+    - choose:
+        - conditions:
+            - condition: template
+              value_template:
+                "{{ trigger.event.event_type == 'esphome.cycle_started'
+                and device_name == 'shelly-plus-pm-mini-reduit1' }}"
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.shelly_plus_1_mini_reduit_force_fan
+    - choose:
+        - conditions:
+            - condition: template
+              value_template:
+                "{{ trigger.event.event_type == 'esphome.cycle_completed'
+                and device_name == 'shelly-plus-pm-mini-reduit1' }}"
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.shelly_plus_1_mini_reduit_force_fan
+    - choose:
+        - conditions:
+            - condition: time
+              after: 07:00:00
+              before: "22:00:00"
+            - condition: template
+              value_template:
+                "{{ trigger.event.event_type == 'esphome.cycle_completed'
+                and device_name == 'shelly-plus-pm-mini-dish-machin' }}"
+          sequence:
+            - data:
+                room_name: livingroom
+                song_id: 7356
+              action: script.play_random_rtttl_song_nspanel
+    - choose:
+        - conditions:
+            - condition: time
+              after: 07:00:00
+              before: "22:00:00"
+            - condition: template
+              value_template:
+                "{{ trigger.event.event_type == 'esphome.cycle_completed'
+                and device_name == 'shelly-plus-pm-mini-reduit1' }}"
+          sequence:
+            - data:
+                room_name: livingroom
+                song_id: 4686
+              action: script.play_random_rtttl_song_nspanel
+  variables:
+    device_name: "{{ trigger.event.data.device }}"
+    energy_at_start:
+      "{% if trigger.event.data.energy_at_start is defined %}\n  {{
+      trigger.event.data.energy_at_start | float }}\n{% else %}\n  unknown\n{% endif
+      %}\n"
+    start_time:
+      "{% if trigger.event.data.epoch_at_start is defined %}\n  {{ trigger.event.data.epoch_at_start
+      | int | timestamp_local }}\n{% else %}\n  unknown\n{% endif %}\n"
+    time_elapsed:
+      "{% if trigger.event.data.time_elapsed_s is defined %}\n  {% set
+      seconds = trigger.event.data.time_elapsed_s | int %} {{\n  '%02d:%02d:%02d'
+      | format(seconds // 3600, (seconds % 3600) // 60, seconds %\n  60) }}\n{% else
+      %}\n  unknown\n{% endif %}\n"
+    energy_used:
+      "{% if trigger.event.data.energy_used is defined %}\n  {{ trigger.event.data.energy_used
+      | float(0.0) | round(2) }}\n{% else %}\n  unknown\n{% endif %}\n"
+  mode: single
+- id: "1767694717703"
+  alias: Switches Balcony Kitchen
+  description: ""
+  triggers:
+    - id: switch_kitchen_toggle
+      domain: mqtt
+      device_id: 0a8ffe0dfab9d1a4ff93b870f14cae5c
+      type: action
+      subtype: scene_1
+      trigger: device
+    - id: light_balcony_on
+      trigger: time
+      at: "20:00:00"
+    - id: light_balcony_off
+      trigger: time
+      at: "22:00:00"
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'switch_kitchen_toggle' }}"
+          sequence:
+            - action: switch.toggle
+              target:
+                device_id: 8e7a91db3c3e25f603d7375553426d2f
+              data: {}
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'light_balcony_on' }}"
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.switch_balcony_l2
+              data: {}
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.id == 'light_balcony_off' }}"
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.switch_balcony_l2
+              data: {}
+  mode: single

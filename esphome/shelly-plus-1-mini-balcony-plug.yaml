@@ -1,0 +1,13 @@
+substitutions:
+  name: shelly-plus-1-mini-balcony-plug
+  device_name: "Shelly Plus 1 Mini (Balcony plug)"
+
+<<: !include templates/shelly-plus-1-mini.yaml
+
+switch:
+  - platform: output
+    id: "relay"
+    device_class: outlet
+    name: "${device_name} Plug"
+    output: "relay_output"
+    restore_mode: ALWAYS_ON

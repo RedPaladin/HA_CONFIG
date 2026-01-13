@@ -1,0 +1,22 @@
+esphome:
+  name: shelly-plus-1-mini-stairs-light
+  friendly_name: Shelly Plus 1 Mini (Stairs light)
+
+<<: !include templates/shelly-plus-1-mini.yaml
+
+light:
+  - platform: binary
+    name: "Stairs light"
+    id: stairs_light
+    output: relay_output
+    restore_mode: RESTORE_DEFAULT_OFF
+
+binary_sensor:
+  - platform: gpio
+    name: "Switch"
+    pin: 10
+    on_state:
+      then:
+        - light.toggle: stairs_light
+    filters:
+      - delayed_on_off: 50ms

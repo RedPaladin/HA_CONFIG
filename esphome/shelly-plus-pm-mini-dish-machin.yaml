@@ -1,0 +1,10 @@
+substitutions:
+  name: "shelly-plus-pm-mini-dish-machin"
+  device_name: "Shelly Plus PM Mini (dish machine)"
+
+  power_threshold_high: "20"
+  power_threshold_low: "2"
+  delay_on_ms: "180000" # 3min
+  delay_off_ms: "180000" # 3min
+
+<<: !include templates/shelly-plus-pm-mini.yaml

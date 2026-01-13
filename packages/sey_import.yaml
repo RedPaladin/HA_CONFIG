@@ -1,0 +1,175 @@
+shell_command:
+  delete_data_file: 'rm {{ filename }}'
+  
+template:
+  - sensor:
+    - name: "SEY Dummy" # Just a dummy sensor to have the sensors shown as known sensor in Home Assistant
+      unique_id: "sey_dummy"
+      unit_of_measurement: "kWh"
+      state: 0
+      device_class: energy
+      state_class: total
+    - name: "SEY Water Consumption"
+      unique_id: "sey_water_consumption"
+      unit_of_measurement: "m³"
+      state: none
+      device_class: water
+      state_class: total
+    - name: "SEY Water Cost"
+      unique_id: "sey_water_cost"
+      unit_of_measurement: "CHF"
+      state: none
+      icon: mdi:currency-usd
+      state_class: total
+    - name: "SEY Energy Consumption High Tariff"
+      unique_id: "sey_energy_consumption_high_tariff"
+      unit_of_measurement: "kWh"
+      state: none
+      icon: mdi:transmission-tower-export
+      device_class: energy
+      state_class: total
+    - name: "SEY Cost Energy Consumption High Tariff"
+      unique_id: "sey_cost_energy_consumption_high_tariff"
+      unit_of_measurement: "CHF"
+      state: none
+      icon: mdi:currency-usd
+      state_class: total
+    - name: "SEY Energy Consumption Low Tariff"
+      unique_id: "sey_energy_consumption_low_tariff"
+      unit_of_measurement: "kWh"
+      state: none
+      icon: mdi:transmission-tower-export
+      device_class: energy
+      state_class: total
+    - name: "SEY Cost Energy Consumption Low Tariff"
+      unique_id: "sey_cost_energy_consumption_low_tariff"
+      unit_of_measurement: "CHF"
+      state: none
+      icon: mdi:currency-usd
+      state_class: total
+    - name: "SEY Energy Returned to Grid High Tariff"
+      unique_id: "sey_energy_returned_to_grid_high_tariff"
+      unit_of_measurement: "kWh"
+      state: none
+      icon: mdi:transmission-tower-import
+      device_class: energy
+      state_class: total
+    - name: "SEY Cost Energy Returned to Grid High Tariff"
+      unique_id: "sey_cost_energy_returned_to_grid_high_tariff"
+      unit_of_measurement: "CHF"
+      state: none
+      icon: mdi:currency-usd
+      state_class: total
+    - name: "SEY Energy Returned to Grid Low Tariff"
+      unique_id: "sey_energy_returned_to_grid_low_tariff"
+      unit_of_measurement: "kWh"
+      state: none
+      icon: mdi:transmission-tower-import
+      device_class: energy
+      state_class: total
+    - name: "SEY Cost Energy Returned to Grid Low Tariff"
+      unique_id: "sey_cost_energy_returned_to_grid_low_tariff"
+      unit_of_measurement: "CHF"
+      state: none
+      icon: mdi:currency-usd
+      state_class: total
+
+script:
+  import_sey_data:
+    alias: Import SEY Data
+    description: Import SEY data from a given file and delete it after import
+    mode: queued
+    fields:
+      filename:
+        description: The filename to import (relative to the data directory)
+        example: "20250704-water-consumption-cost.tsv"
+        required: true
+        selector:
+          text:
+      folder:
+        description: Folder where the data
+        example: "data/"
+        required: true
+        selector:
+          text:
+      import_data:
+        description: Import the data (set to false to skip import, just delete the file)
+        example: true
+        required: true
+        selector:
+          boolean:
+    sequence:
+      - if:
+          - "{{ import_data | default(true) }}"
+        then:
+          - service: import_statistics.import_from_file
+            data:
+              timezone_identifier: Europe/Vienna
+              delimiter: "\t"
+              decimal: false
+              filename: "{{ folder }}/{{ filename }}"
+      - service: shell_command.delete_data_file
+        data:
+          filename: "{{ folder }}/{{ filename }}"
+
+automation:
+  - id: import_sey_all_data_of_water_energy
+    alias: Import SEY all data of Water/Energy
+    description: ''
+    trigger:
+      - platform: time
+        at: '03:30:00'
+    condition: []
+    action:
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-data-high-tariff.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-data-low-tariff.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-cost-high-tariff.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-cost-low-tariff.tsv'
+          folder: 'data'
+          import_data: true
+          
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-data-high-tariff.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-data-low-tariff.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-cost-high-tariff.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-cost-low-tariff.tsv'
+          folder: 'data'
+          import_data: true
+          
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-water-consumption-data.tsv'
+          folder: 'data'
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-water-consumption-cost.tsv'
+          folder: 'data'
+          import_data: true

@@ -1,0 +1,10 @@
+substitutions:
+  name: "shelly-plus-pm-mini-guest-room"
+  device_name: "Shelly Plus PM Mini (Guest room)"
+
+  power_threshold_high: "20"
+  power_threshold_low: "5"
+  delay_on_ms: "180000" # 3min
+  delay_off_ms: "300000" # 5min
+
+<<: !include templates/shelly-plus-pm-mini.yaml

@@ -1,0 +1,42 @@
+substitutions:
+  # Settings - Editable values
+  device_name: "nspanel-tv-room"
+  friendly_name: "NSPanel TV Room"
+  wifi_ssid: !secret iot_wifi_ssid
+  wifi_password: !secret iot_wifi_password
+  ota_password: !secret ota_password
+  nextion_update_url: !secret nspanel_url  # Optional
+  # Add-on configuration (if needed)
+  heater_relay: "1"  # Possible values: "1" or "2"
+  cooler_relay: "1"
+
+# Customization area
+##### My customization - Start #####
+##### My customization - End ##### 
+
+# Core and optional configurations
+packages:
+  network_diagnostics: !include 
+    file: /config/esphome/common/network_diagnostics.yaml
+    vars: 
+      network_device_name: "${friendly_name}"
+      
+  remote_package:
+    url: https://github.com/Blackymas/NSPanel_HA_Blueprint
+    ref: main
+    refresh: 300s
+    files:
+      - nspanel_esphome.yaml # Basic package
+      # Optional advanced and add-on configurations
+      # - esphome/nspanel_esphome_advanced.yaml
+      # - esphome/nspanel_esphome_addon_ble_tracker.yaml
+      # - esphome/nspanel_esphome_addon_bluetooth_proxy.yaml
+      # - esphome/nspanel_esphome_addon_climate_cool.yaml
+      # - esphome/nspanel_esphome_addon_climate_heat.yaml
+      - esphome/nspanel_esphome_addon_climate_dual.yaml
+
+esp32:
+  framework:
+    type: esp-idf
+
+    

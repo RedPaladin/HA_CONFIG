@@ -1,0 +1,17 @@
+.storage/
+backups/
+tts/
+deps/
+data/
+__pycache__/
+._.DS_Store
+._configuration.yaml
+.ha_run.lock
+.shopping_list.json
+secrets.yaml
+known_hosts
+www/camera_snapshot.jpg
+home-assistant.log.fault
+zigbee.db
+.cloud/
+.HA_VERSION

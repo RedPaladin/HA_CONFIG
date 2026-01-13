@@ -1,0 +1,111 @@
+input_datetime:
+  lave_vaisselle_program_started:
+    name: Dishwasher Program Start Time
+    has_time: true
+    has_date: true
+
+input_number:
+  dishwasher_energy_start_wh:
+    name: Dishwasher Energy Start (Wh)
+    min: 0
+    max: 1000000
+    step: 1
+    unit_of_measurement: "Wh"
+    mode: box
+
+template:
+  - binary_sensor:
+      - name: Dishwasher Program Running
+        unique_id: dishwasher_program_running
+        state: >
+          {{ not is_state('select.lave_vaisselle_active_program', 'unknown') }}
+        device_class: running
+  - sensor:
+      - name: Dishwasher Remaining Program Time
+        state: >
+          {% set ended_dt = as_datetime(states('sensor.lave_vaisselle_remaining_program_time')) %}
+          {% set started_dt = now() %}
+          {% set delta = ended_dt - started_dt %}
+          {% if delta.total_seconds() >= 0 %}
+            {{ (delta.total_seconds() // 3600) | int }}h {{ ((delta.total_seconds() % 3600) // 60) | int }}m
+          {% else %}
+            ""
+          {% endif %}
+
+automation:
+  - id: dishwasher_notify_program_duration
+    alias: Dishwasher - Notify when program ends with duration
+    description: >
+      Saves the start time when dishwasher program changes from 'unknown',
+      then notifies when it becomes 'unknown' again, with the elapsed duration.
+    trigger:
+      # id: started
+      - platform: state
+        entity_id: select.lave_vaisselle_active_program
+        from: "unknown"
+        to: ~
+        id: started
+      # id: play_song_and_notify
+      - platform: state
+        entity_id: select.lave_vaisselle_active_program
+        to: "unknown"
+        id: play_song_and_notify
+    condition: []
+    action:
+      - choose:
+          # id: started
+          - conditions:
+              - condition: trigger
+                id: started
+            sequence:
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.lave_vaisselle_program_started
+                data:
+                  datetime: "{{ now().isoformat() }}"
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.dishwasher_energy_start_wh
+                data:
+                  value: >
+                    {{ (states('sensor.dish_machine_energy_consumption') | float(0) * 1000) | int }}
+          # id: play_song_and_notify
+          - conditions:
+              - condition: trigger
+                id: play_song_and_notify
+              - condition: template
+                value_template: >
+                  {{ not is_state('input_datetime.lave_vaisselle_program_started', 'unknown') }}
+            sequence:
+              - choose:
+                - conditions:
+                  - condition: time
+                    after: "07:00:00"
+                    before: "22:00:00"
+                  sequence:
+                    - metadata: {}
+                      data:
+                        room_name: livingroom
+                        song_id: 7356
+                      action: script.play_random_rtttl_song_nspanel
+              - variables:
+                  started_raw: "{{ states('input_datetime.lave_vaisselle_program_started') }}"
+                  ended_raw: "{{ now() }}"
+                  duration: >
+                    {% set started_dt = as_datetime(started_raw) %}
+                    {% set ended_dt = as_datetime(ended_raw) %}
+                    {% if started_dt.tzinfo is none %}
+                      {% set started_dt = started_dt.replace(tzinfo=ended_dt.tzinfo) %}
+                    {% endif %}
+                    {% set delta = ended_dt - started_dt %}
+                    {{ (delta.total_seconds() // 3600) | int }}h {{ ((delta.total_seconds() % 3600) // 60) | int }}m
+                  energy_start: "{{ states('input_number.dishwasher_energy_start_wh') | int(0) }}"
+                  energy_now: "{{ (states('sensor.dish_machine_energy_consumption') | float(0) * 1000) | int }}"
+                  energy_used: "{{ energy_now - energy_start }}"
+              - service: notify.mobile_app_sm_s921b
+                data:
+                  title: "🍽️ Dishwasher completed !"
+                  message: 
+                    "- Duration: {{ duration }}.\n
+                     - Energy used: {{ energy_used }} Wh"
+    mode: single

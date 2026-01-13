@@ -1,0 +1,40 @@
+esphome:
+  name: esp32-c3-dev
+  friendly_name: ESP32-C3-DEV
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret iot_wifi_ssid
+  password: !secret iot_wifi_password
+  fast_connect: True
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32-C3-Dev Fallback Hotspot"
+    password: "N2ubL6u2vHvE"
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+
+sensor:
+  - platform: uptime
+    type: timestamp
+    name: "Last boot time"

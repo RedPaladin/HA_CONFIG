@@ -1,0 +1,11 @@
+#################################################################
+## Groups
+#################################################################
+
+Household:
+  - person.jerome
+  - person.svetlana
+
+XmasLights:
+  - switch.shelly_plus_1_mini_terrace_outl_shelly_plus_1_mini_terrace_outlet_outlet
+  - switch.hombli_smart_socket_socket_1

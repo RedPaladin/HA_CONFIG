@@ -1,0 +1,9 @@
+## HOW TO UPDATE HOSTNAME
+## ----------------------------------------------
+# To change the hostname of an ESPHome device, follow these steps:
+#
+# 1) Add use_address: in wifi section with old hostname with prefix .local
+# 2) change name with new hostname and friendly_name, compile and update the device
+# 3) remove use_address: line in wifi section, compile and update the device again
+# 4) Rename yaml file to reflect new hostname
+# 5) Done !

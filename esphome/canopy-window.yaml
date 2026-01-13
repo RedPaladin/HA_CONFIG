@@ -1,0 +1,252 @@
+esphome:
+  name: "canopy-window"
+  friendly_name: Canopy Window
+
+  on_boot:
+    # See: https://esphome.io/components/esphome.html#esphome-on-boot
+    - priority: -100 # At this priority, pretty much everything should already be initialized.
+      then:
+        - lambda: |-
+            auto reason = esp_reset_reason();
+            if (reason == 1) {
+              ESP_LOGI("boot", "Cold boot after power-on!");
+              id(on_power_on) = true;
+            }
+        - switch.turn_on: up_channel_switch
+        - delay: 1s
+        # because of POWER ON, channel is lost, so configure it to 2
+        - if:
+            condition:
+              lambda: 'return id(on_power_on);'
+            then:
+              - logger.log: "Switch to channel 2 ..."
+              - switch.turn_on: up_channel_switch
+              - delay: 100ms
+              - switch.turn_on: up_channel_switch
+              - delay: 100ms
+            else:
+              - logger.log: "Channel 2 already selected"
+
+globals:
+  - id: on_power_on
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: canopy_move_duration_open
+    type: int
+    restore_value: no
+    initial_value: '135'  # total seconds to fully open
+  - id: canopy_move_duration_close
+    type: int
+    restore_value: no
+    initial_value: '130'  # total seconds to fully close
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret iot_wifi_ssid
+  password: !secret iot_wifi_password
+  fast_connect: true
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32-Wroom-32-Dev-2"
+    password: "ernEdTYXnrCN"
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+
+######### SENSOR ########
+sensor:
+  - platform: uptime
+    type: timestamp
+    name: "Last boot time"
+
+######### COVER ##########
+cover:
+  - platform: template
+    name: "Canopy Cover"
+    id: canopy_cover
+    optimistic: false
+    assumed_state: true
+    has_position: true
+    open_action:
+      - script.execute:
+          id: move_cover
+          target: 1.0
+    close_action:
+      - script.execute: 
+          id: move_cover
+          target: 0.0
+    stop_action:
+      - script.stop: move_cover
+      - switch.turn_on: stop_cover_switch
+      - cover.template.publish:
+          id: canopy_cover
+          current_operation: IDLE
+    position_action:
+      - lambda: 'id(move_cover)->execute(pos);'
+
+######### SCRIPT ##########
+script:
+  - id: move_cover
+    parameters:
+      target: float
+    then:
+      - if:
+        # OPENING case
+          condition:
+            lambda: 'return id(canopy_cover).position < target;'
+          then:
+            - cover.template.publish:
+                id: canopy_cover
+                current_operation: OPENING
+            - switch.turn_on: open_cover_switch
+            - while:
+                condition:
+                  lambda: 'return id(canopy_cover).position < target;'
+                then:
+                  - delay: 1s
+                  - script.execute: update_cover_position_opening
+
+        # CLOSING case
+          else:
+            - cover.template.publish:
+                id: canopy_cover
+                current_operation: CLOSING
+            - switch.turn_on: close_cover_switch
+            - if:
+                condition:
+                  # here, if the sensor detects the window as closed but it is not physically totally closed
+                  # we close it during 6 seconds (which is equal to the debouncing time) to make sure it is really closed!
+                  lambda: 'return id(canopy_window_sensor).state;'
+                then:
+                  - logger.log: "Cover seems already closed but let's make sure it is entirely closed"
+                  - repeat:
+                      count: 6
+                      then:
+                        - delay: 1s
+                        - script.execute: update_cover_position_closing
+            - while:
+                condition:
+                  # here, we support a special case when real position differs to logical position (forced by remote controller, for example)
+                  # if we close completly the cover (position = 0.0), we ensure the sensor detects the window as closed (after debouncing of canopy_window_sensor)
+                  lambda: 'return id(canopy_cover).position > target || (target == 0.0 && !id(canopy_window_sensor).state);'
+                then:
+                  - delay: 1s
+                  - script.execute: update_cover_position_closing
+
+      - switch.turn_on: stop_cover_switch
+      - cover.template.publish:
+          id: canopy_cover
+          current_operation: IDLE
+
+  - id: update_cover_position_opening
+    then:
+      - lambda: |-
+          float step = 1.0 / id(canopy_move_duration_open);
+          float pos  = id(canopy_cover).position + step;
+          if (pos > 1.0) pos = 1.0;
+          id(canopy_cover).position = pos;
+          id(canopy_cover).publish_state();
+
+  - id: update_cover_position_closing
+    then:
+      - lambda: |-
+          float step = 1.0 / id(canopy_move_duration_close);
+          float pos  = id(canopy_cover).position - step;
+          if (pos < 0.0) pos = 0.0;
+          id(canopy_cover).position = pos;
+          id(canopy_cover).publish_state();
+
+####### BINARY_SENSOR ########
+binary_sensor:
+  - platform: homeassistant
+    id: canopy_window_sensor
+    name: "Window closed"
+    internal: False
+    entity_id: binary_sensor.canopy_window_contact
+    filters:
+      - invert
+      - delayed_on: 6s # debouncing
+    on_press:
+      then:
+        - logger.log: "window contact ON"
+    on_release: 
+      then:
+        - logger.log: "window contact OFF"
+
+########### SWITCH ############
+switch:
+  - platform: gpio
+    id: up_channel_switch
+    name: "Up channel"
+    pin:
+      number: GPIO21
+      inverted: true
+      mode:
+        output: true
+    on_turn_on:
+      - delay: 100ms
+      - switch.turn_off: up_channel_switch
+
+  - platform: gpio
+    id: down_channel_switch
+    name: "Down channel"
+    pin:
+      number: GPIO05
+      inverted: true
+      mode:
+        output: true
+    on_turn_on:
+      - delay: 100ms
+      - switch.turn_off: down_channel_switch
+
+  - platform: gpio
+    id: open_cover_switch
+    name: "Open"
+    pin:
+      number: GPIO18
+      inverted: true
+      mode:
+        output: true
+
+  - platform: gpio
+    id: stop_cover_switch
+    name: "Stop"
+    pin:
+      number: GPIO16
+      inverted: true
+      mode:
+        output: true
+    on_turn_on:
+      - switch.turn_off: open_cover_switch
+      - switch.turn_off: close_cover_switch
+      - delay: 1s
+      - switch.turn_off: stop_cover_switch
+
+  - platform: gpio
+    id: close_cover_switch
+    name: "Close"
+    pin:
+      number: GPIO04
+      inverted: true
+      mode:
+        output: true

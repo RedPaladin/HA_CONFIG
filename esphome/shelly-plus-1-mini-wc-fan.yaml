@@ -1,0 +1,12 @@
+substitutions:
+  device_name: "Shelly Plus 1 Mini (WC fan)"
+  name: "shelly-plus-1-mini-wc-fan"
+
+  ## FAN DELAY
+  additional_delay_on_integer: "10"  # additional ON delay in seconds, can be changed if needed by front-end
+  factory_delay_on: 3s               # factory ON delay in timestamp, cannot be changed
+  additional_delay_off_integer: "60" # additional OFF delay in seconds, can be changed if needed by front-end
+  factory_delay_off: 3min            # factory OFF delay in timestamp, cannot be changed
+
+packages:
+  common: !include fan_common.yaml

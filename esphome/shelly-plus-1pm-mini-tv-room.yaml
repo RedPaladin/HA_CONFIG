@@ -1,0 +1,89 @@
+esphome:
+  name: shelly-plus-1pm-mini-tv-room
+  friendly_name: Shelly Plus 1PM Mini (TV room)
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret iot_wifi_ssid
+  password: !secret iot_wifi_password
+  fast_connect: True
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Shelly-Plus-1Pm-Mini-Tv-Room"
+    password: "6pAy7YS8xLQT"
+
+captive_portal:
+    
+output:
+  - platform: gpio
+    id: "relay_output"
+    pin: GPIO05
+
+light:
+  - platform: binary
+    restore_mode: RESTORE_DEFAULT_OFF
+    id: bracket_lamp
+    name: "Bracket Lamp"
+    output: relay_output
+
+sensor:
+  - platform: ntc
+    sensor: temp_resistance_reading
+    name: "Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    icon: "mdi:thermometer"
+    calibration:
+      b_constant: 3350
+      reference_resistance: 10kOhm
+      reference_temperature: 298.15K
+    on_value_range:
+      - above: "80.0"
+        then:
+          - light.turn_off: bracket_lamp
+  - platform: resistance
+    id: temp_resistance_reading
+    sensor: temp_analog_reading
+    configuration: DOWNSTREAM
+    resistor: 10kOhm
+  - platform: adc
+    id: temp_analog_reading
+    pin: GPIO3
+    attenuation: 12db
+
+  - platform: bl0942
+    uart_id: uart_bus
+    voltage:
+      name: 'Voltage'
+    current:
+      name: 'Current'
+    power:
+      name: 'Power'
+    frequency:
+      name: "Frequency"
+      accuracy_decimals: 2
+    update_interval: 15s
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO6
+  rx_pin: GPIO7
+  baud_rate: 9600
+  stop_bits: 1

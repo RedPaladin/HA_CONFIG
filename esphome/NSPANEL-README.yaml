@@ -1,0 +1,26 @@
+# IMPORTANT: How to update the firmware
+
+# Updating NSPanel HA Blueprint can be a REAL nightmare
+
+# There are 3 things to update: Firmware, TFT and Blueprint. It's important to keep all those versions aligned !
+
+# 1) Update the TFT
+# As the NSPanel are on other VLAN, they have no access to Internet. The TFT file needs to be on Home Assistant web server. Do not forget to add
+# the file .tft downloaded from github into the www folder (_eu and _blank)
+# Select in the drop down of the device in Home Assistant, the option nextion_update_url and press 'Update TFT'. See progress in the log of the device and verify the version in Device page in HA
+
+# 2) Updating the firmware
+# Either using OTA or the serial cable. Serial cable is needed to change the framework or when the wifi is not connected for any reason
+
+# For serial update, first of all, open the device and add something to avoid the contact between the board and the screen (short-circuit possible!).
+# Connect the serial cable. Bend a little bit the cable to the side to make sure the contact is good.
+# /!\ It seems that the power need to be sufficient to work, so CONNECT the USB cable directly to the computer, not using the connectors below the screen !
+# When everything is ok, the two LEDs from the board are blinking alternatively and states goes from Connecting to Preparing installlation
+# in few seconds. If more than 30 seconds. The contact is bad. Try again !
+
+# 3) Update Blueprint
+# Just reimport the Blueprint from Home Assistant. All the automations created before are automatically updated. See the progression of the download of the blueprint in the log
+
+
+
+# Voilà :)

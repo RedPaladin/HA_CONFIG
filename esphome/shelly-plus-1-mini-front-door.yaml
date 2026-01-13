@@ -1,0 +1,47 @@
+substitutions:
+  name: shelly-plus-1-mini-front-door
+  device_name: "Shelly Plus 1 Mini (Front door)"
+
+<<: !include templates/shelly-plus-1-mini.yaml
+
+globals:
+  - id: light_on_before_off_in_s
+    type: int
+    initial_value: '5'
+
+script:
+  - id: light_off_after_delay
+    then:
+      - logger.log:
+          format: "light is on before off for %d second(s)"
+          args: [ 'id(light_on_before_off_in_s) * 1000' ]
+      - delay: !lambda 'return id(light_on_before_off_in_s) * 1000;'
+      - light.turn_off: front_door_light
+      - logger.log:
+          format: "light is turned off after a delay of %d second(s)"
+          args: [ 'id(light_on_before_off_in_s) * 1000' ]
+
+binary_sensor:
+  - platform: gpio
+    device_class: motion
+    name: "Front door motion detected"
+    pin: 
+      number: 10
+      inverted: True # add resistor 220 kOhm, 2W between L' and SW
+    on_press: 
+      then:
+        - logger.log: "move detected !"
+        - script.stop: light_off_after_delay
+        - light.turn_on: front_door_light
+    on_release: 
+      then:
+        - logger.log: "end of move !"
+        - script.execute: light_off_after_delay
+    filters:
+      - delayed_on_off: 50ms
+
+light:
+  - platform: binary
+    name: "Front door light"
+    id: front_door_light
+    output: relay_output

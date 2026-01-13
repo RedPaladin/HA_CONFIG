@@ -1,0 +1,193 @@
+esphome:
+  name: ${name}
+  friendly_name: ${device_name}
+
+packages:
+  network_diagnostics: !include /config/esphome/common/network_diagnostics.yaml
+
+esp32:
+  board: esp32-c3-devkitm-1
+  flash_size: 8MB
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+  logs:
+    bl0942: ERROR
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret iot_wifi_ssid
+  password: !secret iot_wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${name}
+    password: !secret captive_portal_password
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+globals:
+  - id: power_threshold_high
+    type: int
+    initial_value: "${power_threshold_high}"
+  - id: power_threshold_low
+    type: int
+    initial_value: "${power_threshold_low}"
+  - id: delay_on_ms
+    type: int
+    initial_value: "${delay_on_ms}"
+  - id: delay_off_ms
+    type: int
+    initial_value: "${delay_off_ms}"
+  - id: cycle_started
+    type: bool
+    initial_value: "false"
+    restore_value: True
+  - id: energy_at_start # kWh
+    type: float
+    initial_value: "0"
+    restore_value: True
+  - id: epoch_at_start # sec
+    type: int
+    initial_value: "0"
+    restore_value: True
+
+binary_sensor:
+  - platform: template
+    id: cycle_active
+    device_class: running
+    name: "Cycle active"
+    lambda: |-
+      // ACTIVE condition
+      if (id(bpower).state > id(power_threshold_high)) {
+        return true;
+      }
+
+      // INACTIVE condition
+      if (id(bpower).state < id(power_threshold_low)) {
+        return false;
+      }
+
+      // In the middle zone (low-high), keep previous state
+      return id(cycle_active).state;
+    on_press: 
+      then:
+        - if:
+            condition:
+              lambda: 'return !id(cycle_started);'
+            then:
+              - lambda: !lambda |-
+                  id(energy_at_start) = id(benergy).state;
+                  id(epoch_at_start) = id(homeassistant_time).now().timestamp;
+              - globals.set:
+                  id: cycle_started
+                  value: 'true'
+              - homeassistant.event:
+                  event: esphome.cycle_started
+                  data:
+                    device: ${name}
+                    message: "Cycle started!"
+                    energy_at_start: !lambda 'return id(energy_at_start);'
+                    epoch_at_start: !lambda 'return id(epoch_at_start) - (id(delay_on_ms) / 1000);'
+              - logger.log: "Cycle started! An event sent to Home Assistant"
+            else:
+              - logger.log: "Cycle already started, nothing to do ..."
+    on_release: 
+      then:
+        - if:
+            condition:
+              lambda: 'return id(cycle_started);'
+            then:
+              - globals.set:
+                  id: cycle_started
+                  value: 'false'
+              - homeassistant.event:
+                  event: esphome.cycle_completed
+                  data:
+                    device: ${name}
+                    message: "Cycle completed!"
+                    energy_used: !lambda 'return id(benergy).state - id(energy_at_start);'
+                    time_elapsed_s: !lambda 'return id(homeassistant_time).now().timestamp - id(epoch_at_start) - (id(delay_off_ms) / 1000);'
+              - logger.log: "Cycle completed! An event sent to Home Assistant"
+            else:
+              - logger.log: "Cycle not started, nothing to do ..."
+    filters:
+      - delayed_on: !lambda 'return id(delay_on_ms);'
+      - delayed_off: !lambda 'return id(delay_off_ms);'
+
+sensor:
+  - platform: ntc
+    sensor: temp_resistance_reading
+    name: "Temperature"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+    icon: "mdi:thermometer"
+    calibration:
+      b_constant: 3350
+      reference_resistance: 10kOhm
+      reference_temperature: 298.15K
+  - platform: resistance
+    id: temp_resistance_reading
+    sensor: temp_analog_reading
+    configuration: DOWNSTREAM
+    resistor: 10kOhm
+  - platform: adc
+    id: temp_analog_reading
+    pin: GPIO3
+    attenuation: 12db
+
+  - platform: bl0942
+    uart_id: uart_bus
+    voltage:
+      name: "Voltage"
+      id: bvoltage
+      icon: mdi:alpha-v-circle-outline
+      device_class: voltage
+    current:
+      name: "Current"
+      id: bcurrent
+      icon: mdi:alpha-a-circle-outline
+      device_class: current
+    power:
+      name: "Power"
+      id: bpower
+      icon: mdi:transmission-tower
+      device_class: power
+    energy:
+      name: "Energy"
+      id: benergy
+      icon: mdi:lightning-bolt
+      device_class: energy
+    frequency:
+      name: "Frequency"
+      id: bfreq
+      accuracy_decimals: 2
+      icon: mdi:cosine-wave
+      device_class: frequency
+    update_interval: 20s
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO6
+  rx_pin: 
+    number: GPIO7
+    mode:
+      pullup: true
+      input: true
+  baud_rate: 9600
+  stop_bits: 1
+  rx_full_threshold: 23

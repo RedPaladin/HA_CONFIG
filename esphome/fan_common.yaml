@@ -1,0 +1,190 @@
+<<: !include templates/shelly-plus-1-mini.yaml
+
+globals:
+  - id: ignore_switch_input
+    type: bool
+    initial_value: 'false'
+  - id: internal_running_counter
+    type: int
+    initial_value: "0"
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(fan_control).state == true) {
+            id(internal_running_counter) += 1;
+          } else {
+            if (id(internal_running_counter) != 0) {
+              id(last_running_time).publish_state(id(internal_running_counter));
+            }
+            id(internal_running_counter) = 0;
+          }
+
+number:
+  - platform: template
+    id: additional_delay_on_number
+    name: "Delay on"
+    optimistic: True
+    min_value: 0
+    max_value: 3600
+    restore_value: True
+    initial_value: ${additional_delay_on_integer}
+    step: 1
+  - platform: template
+    id: additional_delay_off_number
+    name: "Delay off"
+    optimistic: True
+    min_value: 0
+    max_value: 3600
+    restore_value: True
+    initial_value: ${additional_delay_off_integer}
+    step: 1
+
+script:
+  - id: fan_on_after_delay
+    then:
+      - delay: !lambda 'return id(additional_delay_on_number).state * 1000;'
+      - fan.turn_on: "fan_control"
+      - delay: ${factory_delay_on}
+      - logger.log: "fan is running now"
+      
+  - id: fan_off_after_delay
+    then:
+      - delay: !lambda 'return id(additional_delay_off_number).state * 1000;'
+      - fan.turn_off: "fan_control"
+      - delay: ${factory_delay_off}
+      - logger.log: "fan is properly stopped"
+
+time:
+  - platform: homeassistant
+    id: time_provider
+    on_time:
+      - seconds: 0
+        minutes: 0
+        hours: 21
+        then:
+          - logger.log: "entering quiet period !"
+          - switch.turn_off: ignore_switch
+    on_time_sync:
+      then:
+        - logger.log: "Synchronized system clock"
+
+switch:
+  - platform: template
+    name: "Force fan"
+    id: ignore_switch
+    icon: mdi:fan-alert
+    optimistic: True
+    on_turn_on: 
+      then:
+        - logger.log: "switch.on_turn_on"
+        - if:
+            condition:
+              lambda: |-
+                auto now = id(time_provider).now();
+                return now.is_valid() && now.hour < 21 && now.hour >= 7;
+            then:
+              - fan.turn_on: fan_control
+              - globals.set:
+                  id: ignore_switch_input
+                  value: 'true'
+            else:
+              - logger.log: "cannot ignore switch input because we are in quiet period !"
+              
+    on_turn_off: 
+      then:
+        - logger.log: "switch.on_turn_off"
+        - if:
+            condition:
+              - lambda: |-
+                  auto now = id(time_provider).now();
+                  return now.is_valid() && now.hour < 21 && now.hour >= 7;
+            then:
+              - homeassistant.event:
+                  event: esphome.keep_on_off
+                  data:
+                    message: "We stopped ignoring switch input"
+                    sender_id: ${name}
+              - logger.log: "event sent to Home Assistant outside quiet period"
+            else:
+              - logger.log: "nothing to send to Home Assistant because we are in quiet period !"
+        - globals.set:
+            id: ignore_switch_input
+            value: 'false'
+        - if:
+            condition:
+              binary_sensor.is_on: switch_input
+            then:
+              - logger.log: "switch input was ON when stopping ignoring it. So switch fan ON"
+              - fan.turn_on: fan_control
+            else:
+              - fan.turn_off: fan_control
+
+fan:
+  - platform: binary
+    id: fan_control
+    name: "Fan"
+    output: relay_output
+
+binary_sensor:
+  - platform: template
+    name: "Fan running"
+    icon: mdi:fan
+    lambda: "return id(fan_control).state;"
+
+  - platform: gpio
+    name: "Light"
+    device_class: light
+    id: switch_input
+    pin: 
+      number: 10
+      inverted: True # because of the switch button wiring !
+    on_press: 
+      then:
+        - logger.log: "binary_sensor.on_press"
+        - if:
+            condition:
+              lambda: 'return id(ignore_switch_input) == false;'
+            then:
+              - script.stop: fan_off_after_delay
+              - if:
+                  condition:
+                    lambda: 'return id(fan_control).state == false;'
+                  then:
+                    - script.execute: fan_on_after_delay
+                  else:
+                    - logger.log: "fan is still running — switch it ON immediately"
+                    - fan.turn_on: "fan_control"
+            else:
+              - logger.log: "binary_sensor.on_press ignored because ignore_switch_input == true"
+
+    on_release: 
+      then:
+        - logger.log: "binary_sensor.on_release"
+        - if:
+            condition:
+              lambda: 'return id(ignore_switch_input) == false;'
+            then:
+              - script.stop: fan_on_after_delay
+              - if:
+                  condition:
+                    lambda: 'return id(fan_control).state == true;'
+                  then:
+                    - script.execute: fan_off_after_delay
+                  else:
+                    - logger.log: "fan is not running prior to stopping — switch it OFF immediately"
+                    - fan.turn_off: "fan_control"
+            else:
+              - logger.log: "binary_sensor.on_release ignored because ignore_switch_input == true"
+
+    filters:
+      - delayed_on_off: 100ms
+
+sensor:
+  - platform: template
+    name: "Last running time"
+    id: last_running_time
+    device_class: duration
+    unit_of_measurement: s
+    accuracy_decimals: 0

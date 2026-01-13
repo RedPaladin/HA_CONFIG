@@ -1,0 +1,267 @@
+# Loads default set of integrations. Do not remove
+default_config:
+
+homeassistant:
+  packages: !include_dir_named packages/
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /local/community/custom-brand-icons/custom-brand-icons.js
+
+#################################################################
+## Includes
+#################################################################
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+zeroconf:
+
+mysql_query:
+  mysql_host: !secret mysql_host
+  mysql_port: !secret mysql_port
+  mysql_username: !secret mysql_username
+  mysql_password: !secret mysql_password
+  mysql_db: rtttl
+  mysql_collation: utf8mb4_general_ci
+
+recorder:
+  db_url: !secret db_url
+  exclude:
+    entities:
+      # Exclude any logging of the chosen light.
+      - light.smart_bulb_kids_room
+      # Exclude any logging of this color loop script.
+      - automation.color_loop_kids_room
+      - sensor.slzb_06_uptime
+    entity_globs:
+      - sensor.shelly_*_voltage
+      - sensor.shelly_*_current
+      # - sensor.shelly_*_power
+      - sensor.shelly_*_frequency
+      # - automation.nspanel_*_blueprint
+      - sensor.haut_*
+      - sensor.bas_*
+      - sensor.shelly_*_temperature
+      - sensor.nspanel_*_rssi
+      - sensor.dream_machine_special_edition_*
+      - sensor.sunrise_*
+
+http:
+  server_port: 8087
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+    - 192.168.1.0/24
+
+logger:
+  default: info
+  logs:
+    homeassistant.components.automation.nspanel_parents_room_blueprint: warning
+    homeassistant.components.automation.nspanel_kids_room_blueprint: warning
+    homeassistant.components.automation.nspanel_guest_room_blueprint: warning
+    homeassistant.components.automation.nspanel_living_room_blueprint: warning
+    homeassistant.components.automation.nspanel_tv_room_blueprint: warning
+    aioesphomeapi.reconnect_logic: warning
+
+i_regul_heatpump:
+  id: !secret i_regul_heatpump_id
+  password: !secret i_regul_heatpump_password
+  scan_interval: 300
+
+import_statistics:
+
+## Temporary disable because i_regul_heatpump is disabled
+
+#sensor:
+#  - platform: derivative
+#    name: Heating power
+#    source: sensor.i_regul_heatpump_heating_energy_consumption
+#    unit: kW
+#    time_window: "00:10:00"
+#  - platform: derivative
+#    name: Defrost power
+#    source: sensor.i_regul_heatpump_defrost_energy_consumption
+#    unit: kW
+#    time_window: "00:10:00"
+#  - platform: derivative
+#    name: Cooling power
+#    source: sensor.i_regul_heatpump_cooling_energy_consumption
+#    unit: kW
+#    time_window: "00:10:00"
+#  - platform: derivative
+#    name: ECS power
+#    source: sensor.i_regul_heatpump_ecs_energy_consumption
+#    unit: kW
+#    time_window: "00:10:00"
+#  - platform: derivative
+#    name: Heat pump total power
+#   source: sensor.i_regul_heatpump_total_energy_consumption
+#   unit: kW
+#   time_window: "00:10:00"
+
+#### Electricity tracking
+
+sensor:
+  - platform: derivative
+    name: Current power production
+    source: sensor.envoy_482329131221_lifetime_energy_production
+    unit: kW
+    unit_prefix: m # / (1e-3) because original unit is in MWh
+  - platform: derivative
+    name: Current power consumption
+    source: sensor.envoy_482329131221_lifetime_energy_consumption
+    unit: kW
+    unit_prefix: m # / (1e-3) because original unit is in MWh
+
+#### Electricity tracking
+
+# logger:
+#   logs:
+#     homeassistant.components.utility_meter.sensor: debug
+
+utility_meter:
+  daily_energy_returned_to_grid:
+    source: sensor.envoy_482329131221_lifetime_net_energy_production # in MWh
+    name: Energy returned to grid
+    cycle: daily
+    tariffs:
+      - high
+      - low
+  daily_energy_grid_consumption:
+    source: sensor.envoy_482329131221_lifetime_net_energy_consumption # in MWh
+    name: Energy grid consumption
+    cycle: daily
+    tariffs:
+      - high
+      - low
+  daily_energy_production:
+    source: sensor.envoy_482329131221_lifetime_energy_production # in MWh
+    name: Energy production in MWh
+    cycle: daily
+    tariffs:
+      - none
+  daily_energy_consumption:
+    source: sensor.envoy_482329131221_lifetime_energy_consumption # in MWh
+    name: Energy consumption
+    cycle: daily
+    tariffs:
+      - none
+
+template:
+  # Test SEY with templated sensor (01-09-2025)
+  - sensor:
+      - name: "Total Water Consumption Test"
+        unit_of_measurement: "m³"
+        state: none
+        device_class: water
+        state_class: total
+
+  - sensor:
+      - name: "Energy production today"
+        state: "{{ states('sensor.daily_energy_production_none') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:solar-power-variant-outline
+        state_class: total_increasing
+      - name: "Energy consumption today"
+        state: "{{ states('sensor.daily_energy_consumption_none') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:home-lightning-bolt
+        state_class: total_increasing
+  #  Tariff 2025 according to https://www.yverdon-energies.ch/electricite/ warning, this is in ct.
+  - sensor:
+      - name: "Energy returned to grid high tariff"
+        state: "{{ states('sensor.daily_energy_returned_to_grid_high') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-import
+        state_class: total_increasing
+      - name: "Cost energy returned to grid high tariff"
+        state: "{{ states('sensor.energy_returned_to_grid_high_tariff') | float * (12.20 + 1.50) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy returned to grid low tariff"
+        state: "{{ states('sensor.daily_energy_returned_to_grid_low') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-import
+        state_class: total_increasing
+      - name: "Cost energy returned to grid low tariff"
+        state: "{{ states('sensor.energy_returned_to_grid_low_tariff') | float * (12.20 + 1.50) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  #  Tariff 2025 according to https://www.yverdon-energies.ch/electricite/ warning, this is in ct.
+  - sensor:
+      - name: "Energy grid consumption high tariff"
+        state: "{{ states('sensor.daily_energy_grid_consumption_high') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-export
+        state_class: total_increasing
+      - name: "Cost energy grid consumption high tariff"
+        state: "{{ states('sensor.energy_grid_consumption_high_tariff') | float * (16.76 + 15.31 + 0.59 + 0.25 + 2.49 + 0.6 + 0.022 + 0.76 + 0.7 + 0.6) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy grid consumption low tariff"
+        state: "{{ states('sensor.daily_energy_grid_consumption_low') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-export
+        state_class: total_increasing
+      - name: "Cost energy grid consumption low tariff"
+        state: "{{ states('sensor.energy_grid_consumption_low_tariff') | float * (14.32 + 9.31 + 0.59 + 0.25 + 2.49 + 0.6 + 0.022 + 0.76 + 0.7 + 0.6) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+
+  - sensor:
+      - name: "Energy returned to grid"
+        state: "{{ (states('sensor.energy_returned_to_grid_high_tariff') | float + states('sensor.energy_returned_to_grid_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-import
+        state_class: total_increasing
+      - name: "Energy grid consumption"
+        state: "{{ (states('sensor.energy_grid_consumption_high_tariff') | float + states('sensor.energy_grid_consumption_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-export
+        state_class: total_increasing
+
+  - sensor:
+      - name: "Cost energy returned to grid"
+        state: "{{ (0 - states('sensor.cost_energy_returned_to_grid_high_tariff') | float - states('sensor.cost_energy_returned_to_grid_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+      - name: "Cost energy grid consumption"
+        state: "{{ (states('sensor.cost_energy_grid_consumption_high_tariff') | float + states('sensor.cost_energy_grid_consumption_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+
+  - sensor:
+      - name: "Total daily cost energy"
+        state: "{{ (states('sensor.cost_energy_grid_consumption') | float + states('sensor.cost_energy_returned_to_grid') | float) | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+
+  #### Tracking time TV watching
+  - sensor:
+      - name: "Time TV watching"
+        state: >
+          {% if is_state('media_player.shield_2', 'on') %}
+            {{ relative_time(states.media_player.shield_2.last_updated) }}
+          {% endif %}
+
+rest_command:
+  notify_lametric:
+    url: "http://192.168.1.10:8080/api/v2/widget/update/com.lametric.diy.devwidget/e2bbb2bb48d0499db222e82266893326"
+    method: "post"
+    username: !secret lametric_username
+    password: !secret lametric_password
+    content_type: "application/json"
+    payload: '{ "frames" : [ { "icon": "{{ icon }}", "text" : "{{ text }}" } ] }'

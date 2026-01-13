@@ -1,0 +1,19 @@
+  # - trigger:
+  #     - platform: time_pattern
+  #       hours: /1
+  #   action:
+  #     - service: weather.get_forecast
+  #       target:
+  #         entity_id: weather.home_3
+  #       data:
+  #         type: daily
+  #       response_variable: daily ###I've tried w/ and w/o 
+  #   sensor:
+  #     - name: High Temperature Forecast
+  #       unique_id: high_temperature_forecast
+  #       state: "{{ daily['weather.home_3'].forecast[0].temperature }}"
+  #       unit_of_measurement: °F
+  #     - name: Low Temperature Forecast
+  #       unique_id: low_temperature_forecast
+  #       state: "{{ daily['weather.home_3'].forecast[0].templow }}"
+  #       unit_of_measurement: °F

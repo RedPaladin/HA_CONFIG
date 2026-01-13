@@ -1,0 +1,148 @@
+script:
+  set_room_cooling_mode:
+    description: "Set HVAC mode for a given thermostat"
+    fields:
+      thermostat_entity:
+        description: "Thermostat entity"
+        example: "climate.nspanel_kids_room_thermostat"
+      hvac_mode:
+        description: "HVAC mode to set"
+        example: "cool"
+    sequence:
+      - service: climate.turn_on
+        target:
+          entity_id: "{{ thermostat_entity }}"
+      - service: climate.set_hvac_mode
+        target:
+          entity_id: "{{ thermostat_entity }}"
+        data:
+          hvac_mode: "{{ hvac_mode }}"
+
+automation:
+  - id: 'cooling_on_when_outside_temp_above_kids_room'
+    alias: Cooling ON when outside temp above kids room 🥵
+    trigger:
+      - platform: template
+        value_template: >
+          {{ states('sensor.i_regul_heatpump_external_temperature') | float > state_attr('climate.nspanel_kids_room_thermostat', 'target_temp_high') | float(0) }}
+        for:
+          minutes: 30
+    condition:
+      - condition: state
+        entity_id: binary_sensor.windows_kids_room_contact
+        state: 'off'  # off = closed
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_kids_room_thermostat
+          hvac_mode: 'cool'
+    mode: single
+
+  - id: 'cooling_off_when_outside_temp_below_kids_room'
+    alias: Cooling OFF when outside temp below kids room 🥶
+    trigger:
+      - platform: template
+        value_template: >
+          {{ states('sensor.i_regul_heatpump_external_temperature') | float < state_attr('climate.nspanel_kids_room_thermostat', 'target_temp_high') | float(0) }}
+        for:
+          minutes: 30
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_kids_room_thermostat
+          hvac_mode: 'off'
+    mode: single
+
+  - id: 'cooling_on_when_outside_temp_above_parents_room'
+    alias: Cooling ON when outside temp above parents room 🥵
+    trigger:
+      - platform: template
+        value_template: >
+          {{ states('sensor.i_regul_heatpump_external_temperature') | float > state_attr('climate.nspanel_parents_room_thermostat', 'target_temp_high') | float(0) }}
+        for:
+          minutes: 30
+    condition:
+      - condition: state
+        entity_id: binary_sensor.windows_parents_room_contact
+        state: 'off'  # off = closed
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_parents_room_thermostat
+          hvac_mode: 'cool'
+    mode: single
+
+  - id: 'cooling_off_when_outside_temp_below_parents_room'
+    alias: Cooling OFF when outside temp below parents room 🥶
+    trigger:
+      - platform: template
+        value_template: >
+          {{ states('sensor.i_regul_heatpump_external_temperature') | float < state_attr('climate.nspanel_parents_room_thermostat', 'target_temp_high') | float(0) }}
+        for:
+          minutes: 30
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_parents_room_thermostat
+          hvac_mode: 'off'
+    mode: single
+
+  - id: 'cooling_off_if_window_open_kids_room'
+    alias: Cooling OFF if Window Open (Kids Room)
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.windows_kids_room_contact
+        to: 'on' # on = open
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_kids_room_thermostat
+          hvac_mode: 'off'
+    mode: single
+
+  - id: 'cooling_on_if_window_closed_kids_room'
+    alias: Cooling ON if Window Closed (Kids Room) and it's hot outside 🥵 !
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.windows_kids_room_contact
+        to: 'off'  # off = closed
+    condition:
+      - condition: template
+        value_template: >
+          {{ states('sensor.i_regul_heatpump_external_temperature') | float > state_attr('climate.nspanel_kids_room_thermostat', 'target_temp_high') | float(0) }}
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_kids_room_thermostat
+          hvac_mode: 'cool'
+    mode: single
+
+  - id: 'cooling_off_if_window_open_parents_room'
+    alias: Cooling OFF if Window Open (Parents Room)
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.windows_parents_room_contact
+        to: 'on' # on = open
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_parents_room_thermostat
+          hvac_mode: 'off'
+    mode: single
+
+  - id: 'cooling_on_if_window_closed_parents_room'
+    alias: Cooling ON if Window Closed (Parents Room) and it's hot outside 🥵 !
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.windows_parents_room_contact
+        to: 'off'  # off = closed
+    condition:
+      - condition: template
+        value_template: >
+          {{ states('sensor.i_regul_heatpump_external_temperature') | float > state_attr('climate.nspanel_parents_room_thermostat', 'target_temp_high') | float(0) }}
+    action:
+      - service: script.set_room_cooling_mode
+        data:
+          thermostat_entity: climate.nspanel_parents_room_thermostat
+          hvac_mode: 'cool'
+    mode: single

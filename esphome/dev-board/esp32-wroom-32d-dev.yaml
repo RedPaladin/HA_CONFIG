@@ -1,0 +1,119 @@
+esphome:
+  name: esp32-wroom-32d-dev
+  friendly_name: ESP32-WROOM-32D-DEV
+  on_shutdown:
+    then:
+      - lambda: |-
+          ESP_LOGI("sleep", "Device is going to sleep now!");
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret iot_wifi_ssid
+  password: !secret iot_wifi_password
+  # fast_connect: true
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32-Wroom-32D-Dev"
+    password: "ernEdTYXnrCN"
+
+captive_portal:
+
+time:
+  - platform: homeassistant
+
+interval:
+  - interval: 10s
+    then:
+      - if:
+          condition:
+            lambda: 'return id(deep_sleep_allowed);'
+          then:
+            - logger.log: "Deep sleep is allowed at boot !"
+          else:
+            - logger.log: "Deep sleep is NOT allowed at boot!"
+
+deep_sleep:
+  id: deep_sleep_1
+  run_duration: 10s
+  sleep_duration: 2min
+
+globals:
+  - id: deep_sleep_allowed
+    type: bool
+    initial_value: "false"
+
+mqtt:
+  broker: !secret mqtt_server
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+  keepalive: 180s
+  topic_prefix: "dev/esp32_wroom_32d"
+
+  on_message:
+    - topic: "dev/esp32_wroom_32d/allow_sleep"
+      then: 
+      - if:
+          condition:
+            lambda: 'return (x == "ON");'
+          then:
+            - logger.log: "Deep sleep is allowed !"
+            - deep_sleep.allow: deep_sleep_1
+            - globals.set: 
+                id: deep_sleep_allowed
+                value: "true"
+          else:
+            - logger.log: "Deep sleep is NOT allowed !"
+            - deep_sleep.prevent: deep_sleep_1
+            - globals.set: 
+                id: deep_sleep_allowed
+                value: "false"
+
+sensor:
+  - platform: uptime
+    type: timestamp
+    name: "Last boot time"
+  - platform: template
+    name: "Wakeup Cause"
+    accuracy_decimals: 0
+    lambda: return esp_sleep_get_wakeup_cause();
+
+text_sensor:
+  - platform: mqtt_subscribe
+    topic: "dev/esp32_wroom_32d/custom_message"
+    name: "Custom message"
+    id: custom_message
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGD("main", "New value for custom message: %s", x.c_str());
+    retain: True
+    
+binary_sensor:
+  - platform: gpio
+    name: "Input pullup"
+    device_class: running
+    state_topic: "dev/esp32_wroom_32d/input_pullup"
+    pin:
+      number: GPIO16
+      mode:
+        input: true
+        pullup: true
+    filters:
+      - delayed_on_off: 200ms

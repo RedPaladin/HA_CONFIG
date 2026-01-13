@@ -1,0 +1,22 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "stationCode": "Weather station for current weather state",
+                    "postCode": "Post number for forecast data",
+                    "pollenStationCode": "Pollen measuring station",
+                    "weatherWarningsNumber": "Number of weather warnings to show as separate entities (default: 1)"
+                }
+            }
+        }
+    }
+}
