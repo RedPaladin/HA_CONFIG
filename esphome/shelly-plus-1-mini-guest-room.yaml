@@ -1,0 +1,25 @@
+substitutions:
+  name: "shelly-plus-1-mini-guest-room"
+  device_name: "Shelly Plus 1 Mini (Guest room)"
+
+esphome:
+  name: ${name}
+  friendly_name: ${device_name}
+  platformio_options:
+    board_build.flash_mode: dio
+
+<<: !include templates/shelly-plus-1-mini.yaml
+
+binary_sensor:
+  - platform: gpio
+    device_class: motion
+    name: "Guest room motion sensor"
+    pin: 10
+    on_press: 
+      then:
+        - logger.log: "move detected !"
+    on_release: 
+      then:
+        - logger.log: "end of move !"
+    filters:
+      - delayed_on_off: 50ms

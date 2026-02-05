@@ -5,21 +5,13 @@ esphome:
     board_build.flash_mode: dio
 
 packages:
+  wifi: !include /config/esphome/common/wifi.yaml
   network_diagnostics: !include /config/esphome/common/network_diagnostics.yaml
 
 esp32:
   board: esp32-c3-devkitm-1
   framework:
     type: esp-idf
-
-wifi:
-  ssid: !secret iot_wifi_ssid
-  password: !secret iot_wifi_password
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "${name}"
-    password: !secret captive_portal_password
 
 captive_portal:
 
