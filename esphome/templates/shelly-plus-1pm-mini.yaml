@@ -71,6 +71,13 @@ sensor:
       id: bpower
       icon: mdi:transmission-tower
       device_class: power
+      filters:
+        - throttle_average: 5s
+        - or:
+          - throttle_average: 60s
+          - or:
+            - delta: 10.0
+        - round: 1
     energy:
       name: "Energy"
       id: benergy

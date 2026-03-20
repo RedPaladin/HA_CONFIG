@@ -3,6 +3,9 @@ default_config:
 
 homeassistant:
   packages: !include_dir_named packages/
+  media_dirs:
+    local: /media
+    www: /config/www
 
 # Load frontend themes from the themes folder
 frontend:
@@ -203,7 +206,7 @@ template:
         icon: mdi:transmission-tower-export
         state_class: total_increasing
       - name: "Cost energy grid consumption high tariff"
-        state: "{{ states('sensor.energy_grid_consumption_high_tariff') | float * (16.76 + 15.31 + 0.59 + 0.25 + 2.49 + 0.6 + 0.022 + 0.76 + 0.7 + 0.6) / 100.0 | round(2) }}"
+        state: "{{ states('sensor.energy_grid_consumption_high_tariff') | float * (40.57) / 100.0 | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
         state_class: total_increasing
@@ -214,7 +217,7 @@ template:
         icon: mdi:transmission-tower-export
         state_class: total_increasing
       - name: "Cost energy grid consumption low tariff"
-        state: "{{ states('sensor.energy_grid_consumption_low_tariff') | float * (14.32 + 9.31 + 0.59 + 0.25 + 2.49 + 0.6 + 0.022 + 0.76 + 0.7 + 0.6) / 100.0 | round(2) }}"
+        state: "{{ states('sensor.energy_grid_consumption_low_tariff') | float * (30.77) / 100.0 | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
         state_class: total_increasing

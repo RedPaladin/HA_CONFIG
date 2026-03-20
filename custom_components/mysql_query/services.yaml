@@ -1,20 +1,53 @@
 query:
-  name: MySQL Query
-  description: Sends a SQL Query to a MySQL Database
+  name: Query (Legacy)
+  description: Executes a SQL query and returns the results in a simple list.
   fields:
     query:
       name: Query
-      description: The SQL query or command to execute
-      example: 'SELECT column1, column2 FROM database WHERE column3=value'
+      description: The SQL query to execute.
       required: true
+      example: "SELECT * FROM states LIMIT 10"
       selector:
         text:
-          type: text
+          multiline: true
     db4query:
-      name: Query Database
-      description: An alternate database to query.
-      example: 'database_name'
+      name: Database Override
+      description: Optionally specify a different database name for this query.
       required: false
       selector:
         text:
-          type: text
+    config_entry:
+      name: Connection
+      description: Choose which saved connection to use.
+      required: false
+      selector:
+        config_entry:
+          integration: mysql_query
+
+execute:
+  name: Execute (Modern)
+  description: >
+    Executes a SQL query and returns results with full metadata, including
+    rows_found, rows_returned, and rows_affected.
+  fields:
+    query:
+      name: Query
+      description: The SQL query to execute.
+      required: true
+      example: "UPDATE users SET status = 'active' WHERE id = 1"
+      selector:
+        text:
+          multiline: true
+    db4query:
+      name: Database Override
+      description: Optionally specify a different database name for this query.
+      required: false
+      selector:
+        text:
+    config_entry:
+      name: Connection
+      description: Choose which saved connection to use.
+      required: false
+      selector:
+        config_entry:
+          integration: mysql_query

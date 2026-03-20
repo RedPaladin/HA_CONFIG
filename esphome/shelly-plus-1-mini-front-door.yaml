@@ -8,18 +8,42 @@ globals:
   - id: light_on_before_off_in_s
     type: int
     initial_value: '5'
+  - id: light_on_with_switch_in_s
+    type: int
+    initial_value: '60'
+
+button:
+  - platform: template
+    name: "Light switch"
+    on_press:
+      - script.execute: light_on_with_switch
 
 script:
+  - id: light_on_with_switch
+    then:
+      - if:
+          condition:
+            - light.is_off: front_door_light
+          then:
+            - logger.log:
+                format: "light is turned on with button for %d second(s)"
+                args: [ 'id(light_on_with_switch_in_s)' ]
+            - light.turn_on: front_door_light
+            - delay: !lambda 'return id(light_on_with_switch_in_s) * 1000;'
+            - script.execute: light_off_after_delay
+          else:
+            - logger.log: "Button is ignored while the light is already turned on"
+
   - id: light_off_after_delay
     then:
       - logger.log:
           format: "light is on before off for %d second(s)"
-          args: [ 'id(light_on_before_off_in_s) * 1000' ]
+          args: [ 'id(light_on_before_off_in_s)' ]
       - delay: !lambda 'return id(light_on_before_off_in_s) * 1000;'
       - light.turn_off: front_door_light
       - logger.log:
           format: "light is turned off after a delay of %d second(s)"
-          args: [ 'id(light_on_before_off_in_s) * 1000' ]
+          args: [ 'id(light_on_before_off_in_s)' ]
 
 binary_sensor:
   - platform: gpio
@@ -32,6 +56,7 @@ binary_sensor:
       then:
         - logger.log: "move detected !"
         - script.stop: light_off_after_delay
+        - script.stop: light_on_with_switch
         - light.turn_on: front_door_light
     on_release: 
       then:
