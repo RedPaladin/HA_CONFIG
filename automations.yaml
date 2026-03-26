@@ -62,7 +62,7 @@
   alias: NSPanel Living Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint.yaml
+    path: Blackymas/nspanel_blueprint_v2026031.yaml
     input:
       nspanel_name: 4e40f3e1ab7ea06b0496e4d004180601
       weather_entity: weather.weather_at_1400
@@ -175,42 +175,21 @@
         target:
           entity_id: switch.washing_machine_running
 - id: '1719218837510'
-  alias: Ringdoor Notification
+  alias: Ringdoor Management webhook
   description: ''
   triggers:
-  - event_type: esphome.ringdoor_pressed
-    trigger: event
-    id: esphome_doorbell
-  - trigger: event
-    event_type: state_changed
-    event_data:
-      entity_id: event.g4_doorbell_pro_poe_doorbell
-    id: unifi_doorbell
-  conditions:
-  - condition: template
-    value_template: "{% if trigger.id == 'unifi_doorbell' %}\n  {{ trigger.event.data.old_state
-      is not none and\n     trigger.event.data.old_state.state not in ['unavailable','unknown']
-      and\n     trigger.event.data.new_state.attributes.event_type == 'ring' }}\n{%
-      else %}\n  true\n{% endif %}\n"
+  - webhook_id: SdE0w9QSlUjC3Bqah2bCyOmEWmhSSs7KqtWKAes
+    trigger: webhook
+  conditions: []
   actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: unifi_doorbell
-      sequence:
-      - action: button.press
-        target:
-          entity_id: button.shelly_plus_1_mini_doorbell_ringdoor_relay
-        data: {}
-  - action: media_player.play_media
-    data:
-      announce: true
-      media:
-        media_content_id: https://home.i234.ch/local/door-bell-sound-simple-0.05.mp3
-        media_content_type: music
-        metadata: {}
+  - action: button.press
     target:
-      entity_id: media_player.g4_dome_speaker
+      entity_id: button.shelly_plus_1_mini_doorbell_ringdoor_relay
+    data: {}
+  - device_id: d8232bbbac33f584cf908e0eb53b15c7
+    domain: button
+    entity_id: c079c084ef0f7dd037e882bc10931c25
+    type: press
   - action: camera.snapshot
     data:
       filename: /config/www/camera_snapshot.jpg
@@ -224,16 +203,12 @@
         image: https://home.i234.ch/local/camera_snapshot.jpg?t={{ now().timestamp()
           }}
     action: notify.mobile_app_sm_s921b
-  - device_id: d8232bbbac33f584cf908e0eb53b15c7
-    domain: button
-    entity_id: c079c084ef0f7dd037e882bc10931c25
-    type: press
   mode: single
 - id: '1720092224522'
   alias: NSPanel Guest Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint.yaml
+    path: Blackymas/nspanel_blueprint_v2026031.yaml
     input:
       nspanel_name: da30966e71f658436421e893c31b87e0
       weather_entity: weather.weather_at_1400
@@ -285,7 +260,7 @@
   alias: NSPanel Kids Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint.yaml
+    path: Blackymas/nspanel_blueprint_v2026031.yaml
     input:
       nspanel_name: 52da761f9f029248aace1bbe2535775a
       weather_entity: weather.weather_at_1400
@@ -337,7 +312,7 @@
   alias: NSPanel Parents Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint.yaml
+    path: Blackymas/nspanel_blueprint_v2026031.yaml
     input:
       nspanel_name: 2e99f3f030166b30c382ec889a8c46fc
       weather_entity: weather.weather_at_1400
@@ -486,7 +461,7 @@
   alias: NSPanel TV Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint.yaml
+    path: Blackymas/nspanel_blueprint_v2026031.yaml
     input:
       nspanel_name: 2de2099c873b48ffbe6dbf2b995378b5
       weather_entity: weather.weather_at_1400
@@ -864,7 +839,11 @@
     event_type: esphome.cycle_started
   - trigger: event
     event_type: esphome.cycle_completed
-  conditions: []
+  conditions:
+  - '{{ device_name is defined and device_name in [''shelly-plus-pm-mini-dish-machin'',
+    ''shelly-plus-pm-mini-reduit1''] }}
+
+    '
   actions:
   - choose:
     - conditions:

@@ -5,11 +5,18 @@ substitutions:
 <<: !include templates/shelly-plus-1-mini.yaml
 
 button:
-  - platform: output
+  - platform: template
     id: "relay"
     name: "Ringdoor Relay"
-    output: "relay_output"
-    duration: 500ms
+    on_press: 
+      then:
+        - if:
+            condition:
+              - switch.is_off: "ringdoor_mute"
+            then:
+              - output.turn_on: "relay_output"
+              - delay: 500ms
+              - output.turn_off: "relay_output"
     icon: mdi:bell
 
 switch:
@@ -19,6 +26,7 @@ switch:
     optimistic: True
     icon: mdi:bell-off
 
+# Following code is not used because we are now using G4 Doorbell Pro PoE
 binary_sensor:
   - platform: gpio
     name: "Ringdoor Switch"
