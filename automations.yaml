@@ -208,7 +208,7 @@
   alias: NSPanel Guest Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint_v2026031.yaml
+    path: Blackymas/nspanel_easy_blueprint.yaml
     input:
       nspanel_name: da30966e71f658436421e893c31b87e0
       weather_entity: weather.weather_at_1400
@@ -249,7 +249,7 @@
       left_button_name: Tilt change
       right_button_name: ' '
       utilities_enabled: false
-      indoortemp: sensor.nspanel_guest_room_temperature
+      indoortemp: sensor.thermometer_guests_room_temperature
       home_value01: sensor.thermometer_guests_room_humidity
       alarm: switch.switch_guests_room
       home_custom_button07_icon: mdi:lightbulb
@@ -266,7 +266,7 @@
       weather_entity: weather.weather_at_1400
       outdoortemp: sensor.i_regul_heatpump_external_temperature
       timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
-      climate: climate.nspanel_kids_room_thermostat
+      climate: climate.nspanel_parents_room_thermostat
       qrcode_enabled: true
       qrcode_label: U4YRDC4XT4
       qrcode_value: WIFI:T:WPA;S:Sunrise_Wi-Fi_5E35B5;P:U4YRDC4XT4;;
@@ -301,8 +301,8 @@
       home_custom_button06: alarm_control_panel.alarmo
       home_custom_button06_icon: mdi:shield-lock-outline
       home_custom_button06_name: Home Alarm
-      indoortemp: sensor.nspanel_kids_room_temperature
-      home_value01: sensor.0xa4c1381ea5184aab_humidity
+      indoortemp: sensor.thermometer_kids_room_temperature
+      home_value01: sensor.thermometer_kids_room_humidity
       alarm: light.smart_bulb_kids_room
       chip01: binary_sensor.windows_kids_room_contact
       chip02: binary_sensor.windows_parents_room_contact
@@ -363,8 +363,8 @@
       home_custom_button06: alarm_control_panel.alarmo
       home_custom_button06_icon: mdi:shield-lock-outline
       home_custom_button06_name: Home Alarm
-      indoortemp: sensor.nspanel_parents_room_temperature
-      home_value01: sensor.0xa4c138fdeee55fff_humidity
+      indoortemp: sensor.thermometer_parents_room_temperature
+      home_value01: sensor.thermometer_parents_room_humidity
       left_button_entity: script.cycle_cover_tilt_parents_1st_floor
       left_button_name: Tilt change
       alarm: light.smart_bulb_parents_room
@@ -978,4 +978,29 @@
         target:
           entity_id: switch.switch_balcony_l2
         data: {}
+  mode: single
+- id: '1778829299880'
+  alias: Simulation presence event
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: presence_simulation_change
+  conditions: []
+  actions:
+  - action: notify.notify
+    metadata: {}
+    data:
+      message: Action made by simulation
+  mode: single
+- id: '1779538723604'
+  alias: Doorbell identification webhook
+  description: ''
+  triggers:
+  - trigger: webhook
+    allowed_methods:
+    - POST
+    local_only: true
+    webhook_id: -fZIUqAtoQwg1QA4MD5kFYdWo
+  conditions: []
+  actions: []
   mode: single

@@ -16,3 +16,4 @@ home-assistant.log.fault
 zigbee.db
 .cloud/
 .HA_VERSION
+home-assistant.log*
