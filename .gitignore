@@ -4,6 +4,7 @@ backups/
 tts/
 deps/
 data/
+packages/.allowed_users.yaml
 __pycache__/
 ._.DS_Store
 ._configuration.yaml

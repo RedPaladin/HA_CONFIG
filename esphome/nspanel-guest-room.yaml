@@ -5,10 +5,11 @@ substitutions:
   wifi_ssid: !secret iot_wifi_ssid
   wifi_password: !secret iot_wifi_password
   ota_password: !secret ota_password
-  nextion_update_url: !secret nspanel_url
+  nextion_update_url: !secret nspanel_url   # Optional
   # Add-on configuration (if needed)
   heater_relay: "1"  # Possible values: "1" or "2"
   cooler_relay: "1"
+  include_action_wake_up: true     # Register the wake_up API action
 
 # Customization area
 ##### My customization - Start #####
@@ -26,12 +27,13 @@ packages:
     ref: latest
     refresh: 300s
     files:
-      - nspanel_esphome.yaml
+      - esphome/nspanel_esphome_core.yaml
+      - esphome/nspanel_esphome_standard.yaml
       - esphome/nspanel_esphome_addon_climate_dual.yaml
+      - esphome/nspanel_esphome_addon_upload_tft.yaml  # Upload TFT add-on
 
 esp32:
   framework:
     type: esp-idf
-
 
     

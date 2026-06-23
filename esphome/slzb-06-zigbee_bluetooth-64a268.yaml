@@ -69,7 +69,9 @@ ethernet:
   type: LAN8720
   mdc_pin: GPIO23
   mdio_pin: GPIO18
-  clk_mode: GPIO0_IN
+  clk:
+    mode: CLK_EXT_IN
+    pin: 0
   phy_addr: 1
   power_pin: GPIO16
   # Optional manual IP
@@ -110,10 +112,10 @@ esp32_ble_tracker:
   scan_parameters:
     interval: 1100ms
     window: 1100ms
-    active: true
+    active: False
 
 bluetooth_proxy:
-  active: true
+  active: False
 
 #button:
 #- platform: safe_mode

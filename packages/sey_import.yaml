@@ -17,7 +17,7 @@ template:
         state_class: total
       - name: "SEY Water Cost"
         unique_id: "sey_water_cost"
-        unit_of_measurement: "CHF"
+        unit_of_measurement: "CHF/m³"
         state: none
         icon: mdi:currency-usd
         state_class: total
@@ -30,7 +30,7 @@ template:
         state_class: total
       - name: "SEY Cost Energy Consumption High Tariff"
         unique_id: "sey_cost_energy_consumption_high_tariff"
-        unit_of_measurement: "CHF"
+        unit_of_measurement: "CHF/kWh"
         state: none
         icon: mdi:currency-usd
         state_class: total
@@ -43,7 +43,7 @@ template:
         state_class: total
       - name: "SEY Cost Energy Consumption Low Tariff"
         unique_id: "sey_cost_energy_consumption_low_tariff"
-        unit_of_measurement: "CHF"
+        unit_of_measurement: "CHF/kWh"
         state: none
         icon: mdi:currency-usd
         state_class: total
@@ -56,7 +56,7 @@ template:
         state_class: total
       - name: "SEY Cost Energy Returned to Grid High Tariff"
         unique_id: "sey_cost_energy_returned_to_grid_high_tariff"
-        unit_of_measurement: "CHF"
+        unit_of_measurement: "CHF/kWh"
         state: none
         icon: mdi:currency-usd
         state_class: total
@@ -69,7 +69,7 @@ template:
         state_class: total
       - name: "SEY Cost Energy Returned to Grid Low Tariff"
         unique_id: "sey_cost_energy_returned_to_grid_low_tariff"
-        unit_of_measurement: "CHF"
+        unit_of_measurement: "CHF/kWh"
         state: none
         icon: mdi:currency-usd
         state_class: total

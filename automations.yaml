@@ -62,7 +62,7 @@
   alias: NSPanel Living Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint_v2026031.yaml
+    path: Blackymas/nspanel_easy_blueprint.yaml
     input:
       nspanel_name: 4e40f3e1ab7ea06b0496e4d004180601
       weather_entity: weather.weather_at_1400
@@ -81,7 +81,6 @@
       left_button_entity: script.cycle_cover_tilt_all_2nd_floor
       left_button_name: Tilt change
       indoortemp: sensor.nspanel_livingroom_temperature
-      home_value01: sensor.shellyhtg3_5432045661f8_humidity
       screensaver_display_time: false
       home_custom_button01_icon: ''
       home_custom_button03: alarm_control_panel.alarmo
@@ -118,14 +117,15 @@
       home_custom_button06: cover.esp32_wroom_32_dev_2_canopy_cover
       home_custom_button06_icon: mdi:window-closed
       home_custom_button06_name: Canopy Window
-      chip01: binary_sensor.windows_left_living_room_contact
+      chip01: lock.front_door
       right_button_name: ' Xmas tree'
       home_custom_button03_name: Home Alarm
       home_value03: sensor.dishwasher_remaining_program_time
-      chip02: binary_sensor.windows_right_living_room_contact
+      chip02: binary_sensor.windows_left_living_room_contact
       alarm: light.wled_kitchen
       home_custom_button07_icon: mdi:led-strip-variant
       right_button_entity: switch.hombli_smart_socket_socket_1
+      chip03: binary_sensor.windows_right_living_room_contact
 - id: '1717232643461'
   alias: Wash machine start end cycle detection
   description: ''
@@ -174,36 +174,6 @@
         data: {}
         target:
           entity_id: switch.washing_machine_running
-- id: '1719218837510'
-  alias: Ringdoor Management webhook
-  description: ''
-  triggers:
-  - webhook_id: SdE0w9QSlUjC3Bqah2bCyOmEWmhSSs7KqtWKAes
-    trigger: webhook
-  conditions: []
-  actions:
-  - action: button.press
-    target:
-      entity_id: button.shelly_plus_1_mini_doorbell_ringdoor_relay
-    data: {}
-  - device_id: d8232bbbac33f584cf908e0eb53b15c7
-    domain: button
-    entity_id: c079c084ef0f7dd037e882bc10931c25
-    type: press
-  - action: camera.snapshot
-    data:
-      filename: /config/www/camera_snapshot.jpg
-    target:
-      entity_id:
-      - camera.g4_doorbell_pro_poe_high_resolution_channel
-  - data:
-      title: "\U0001F514 Ding dong !"
-      message: Someone is at the door
-      data:
-        image: https://home.i234.ch/local/camera_snapshot.jpg?t={{ now().timestamp()
-          }}
-    action: notify.mobile_app_sm_s921b
-  mode: single
 - id: '1720092224522'
   alias: NSPanel Guest Room Blueprint
   description: ''
@@ -251,16 +221,16 @@
       utilities_enabled: false
       indoortemp: sensor.thermometer_guests_room_temperature
       home_value01: sensor.thermometer_guests_room_humidity
-      alarm: switch.switch_guests_room
-      home_custom_button07_icon: mdi:lightbulb
+      home_custom_button07_icon: ''
       home_custom_button05: cover.esp32_wroom_32_dev_2_canopy_cover
       home_custom_button05_name: Canopy Window
       home_custom_button05_icon: mdi:window-closed
+      chip01: lock.front_door
 - id: '1720449330389'
   alias: NSPanel Kids Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint_v2026031.yaml
+    path: Blackymas/nspanel_easy_blueprint.yaml
     input:
       nspanel_name: 52da761f9f029248aace1bbe2535775a
       weather_entity: weather.weather_at_1400
@@ -304,15 +274,16 @@
       indoortemp: sensor.thermometer_kids_room_temperature
       home_value01: sensor.thermometer_kids_room_humidity
       alarm: light.smart_bulb_kids_room
-      chip01: binary_sensor.windows_kids_room_contact
-      chip02: binary_sensor.windows_parents_room_contact
+      chip01: lock.front_door
+      chip02: binary_sensor.windows_kids_room_contact
       right_button_entity: script.play_random_rtttl_song_nspanel_kids_room
       right_button_name: Random song
+      chip03: binary_sensor.windows_parents_room_contact
 - id: '1720449359197'
   alias: NSPanel Parents Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint_v2026031.yaml
+    path: Blackymas/nspanel_easy_blueprint.yaml
     input:
       nspanel_name: 2e99f3f030166b30c382ec889a8c46fc
       weather_entity: weather.weather_at_1400
@@ -370,8 +341,9 @@
       alarm: light.smart_bulb_parents_room
       right_button_entity: light.shelly_plus_1_mini_stairs_light_stairs_light
       right_button_name: Stairs light
-      chip01: binary_sensor.windows_parents_room_contact
-      chip02: binary_sensor.windows_kids_room_contact
+      chip01: lock.front_door
+      chip02: binary_sensor.windows_parents_room_contact
+      chip03: binary_sensor.windows_kids_room_contact
 - id: '1721735374228'
   alias: Electricity tariff week days
   description: ''
@@ -461,7 +433,7 @@
   alias: NSPanel TV Room Blueprint
   description: ''
   use_blueprint:
-    path: Blackymas/nspanel_blueprint_v2026031.yaml
+    path: Blackymas/nspanel_easy_blueprint.yaml
     input:
       nspanel_name: 2de2099c873b48ffbe6dbf2b995378b5
       weather_entity: weather.weather_at_1400
@@ -509,14 +481,15 @@
       home_value01: sensor.thermometer_tv_room_humidity
       alarm: light.smart_bulb_tv_room
       home_custom_button07_icon: ''
-      chip01: binary_sensor.shelly_plus_1_mini_spare_1_fan_running
-      chip02: binary_sensor.shelly_plus_1_mini_reduit_fan_running
+      chip01: lock.front_door
+      chip02: binary_sensor.shelly_plus_1_mini_spare_1_fan_running
       home_custom_button05_icon: mdi:shield-lock-outline
-      chip01_icon: mdi:fan
-      chip02_icon: mdi:fan
+      chip01_icon: ''
+      chip02_icon: ''
       right_button_entity: light.shelly_plus_1pm_mini_tv_room_bracket_lamp
       right_button_name: TV light
       home_custom_button02: media_player.piece_a_vivre
+      chip03: binary_sensor.shelly_plus_1_mini_reduit_fan_running
 - id: '1733298456777'
   alias: "\U0001F385 XMas lights"
   description: Turn on and off the christmas lights depending of the time and day
@@ -944,8 +917,9 @@
     subtype: scene_1
     trigger: device
   - id: light_balcony_on
-    trigger: time
-    at: '20:00:00'
+    trigger: sun
+    event: sunset
+    offset: -01:00:00
   - id: light_balcony_off
     trigger: time
     at: '22:00:00'
@@ -991,16 +965,4 @@
     metadata: {}
     data:
       message: Action made by simulation
-  mode: single
-- id: '1779538723604'
-  alias: Doorbell identification webhook
-  description: ''
-  triggers:
-  - trigger: webhook
-    allowed_methods:
-    - POST
-    local_only: true
-    webhook_id: -fZIUqAtoQwg1QA4MD5kFYdWo
-  conditions: []
-  actions: []
   mode: single

@@ -1,0 +1,80 @@
+shell_command:
+  save_base64_image: >
+    bash -c "printf '%s' '{{ data }}' | sed 's#^data:image/[^;]*;base64,##' | base64 -d > /config/www/{{ filename }}.jpg"
+
+automation:
+  - id: ringdoor_management_webhook
+    alias: Ringdoor Management webhook
+    description: ''
+    triggers:
+    - webhook_id: SdE0w9QSlUjC3Bqah2bCyOmEWmhSSs7KqtWKAes
+      trigger: webhook
+    conditions: []
+    actions:
+    - action: button.press
+      target:
+        entity_id: button.shelly_plus_1_mini_doorbell_ringdoor_relay
+      data: {}
+    - device_id: d8232bbbac33f584cf908e0eb53b15c7
+      domain: button
+      entity_id: c079c084ef0f7dd037e882bc10931c25
+      type: press
+    - action: camera.snapshot
+      data:
+        filename: /config/www/camera_snapshot.jpg
+      target:
+        entity_id:
+        - camera.g4_doorbell_pro_poe_high_resolution_channel
+    - data:
+        title: "\U0001F514 Ding dong !"
+        message: Someone is at the door
+        data:
+          image: https://home.i234.ch/local/camera_snapshot.jpg?t={{ now().timestamp()
+            }}
+      action: notify.mobile_app_sm_s921b
+    mode: single
+  - id: unifi_fingerprint_toggle_nuki
+    alias: UniFi Fingerprint Door Management
+    description: "Toggle Nuki Smart Lock based on UniFi fingerprint events"
+    mode: single
+    trigger:
+      - platform: webhook
+        webhook_id: "-fZIUqAtoQwg1QA4MD5kFYdWo"
+    variables:
+      users: !include .allowed_users.yaml
+      fingerprint_id: "{{ trigger.json.alarm.triggers[0].value }}"
+      username: "{{ users.get(fingerprint_id) }}"
+      is_locked: "{{ is_state('lock.front_door', 'locked') }}"
+    condition:
+      - condition: template
+        value_template: >
+          {{
+            trigger.json.alarm.triggers[0].key == 'fingerprint_registered'
+            and username is not none
+          }}
+    action:
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ is_locked }}"
+            sequence:
+              - service: lock.unlock
+                target:
+                  entity_id: lock.front_door
+          - conditions:
+              - condition: template
+                value_template: "{{ not is_locked }}"
+            sequence:
+              - service: lock.lock
+                target:
+                  entity_id: lock.front_door
+      - service: logbook.log
+        data:
+          entity_id: lock.front_door
+          name: Front Door
+          message: >
+            {% if is_locked %}
+              {{ username }} has opened the door
+            {% else %}
+              {{ username }} has closed the door
+            {% endif %}

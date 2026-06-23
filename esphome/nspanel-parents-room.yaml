@@ -9,6 +9,7 @@ substitutions:
   # Add-on configuration (if needed)
   heater_relay: "1"  # Possible values: "1" or "2"
   cooler_relay: "1"
+  include_action_wake_up: true     # Register the wake_up API action
 
 # Customization area
 ##### My customization - Start #####
@@ -22,18 +23,14 @@ packages:
       network_device_name: "${friendly_name}"
       
   remote_package:
-    url: https://github.com/Blackymas/NSPanel_HA_Blueprint
-    ref: main
+    url: https://github.com/edwardtfn/NSPanel-Easy
+    ref: latest
     refresh: 300s
     files:
-      - nspanel_esphome.yaml # Basic package
-      # Optional advanced and add-on configurations
-      # - esphome/nspanel_esphome_advanced.yaml
-      # - esphome/nspanel_esphome_addon_ble_tracker.yaml
-      # - esphome/nspanel_esphome_addon_bluetooth_proxy.yaml
-      # - esphome/nspanel_esphome_addon_climate_cool.yaml
-      # - esphome/nspanel_esphome_addon_climate_heat.yaml
+      - esphome/nspanel_esphome_core.yaml
+      - esphome/nspanel_esphome_standard.yaml
       - esphome/nspanel_esphome_addon_climate_dual.yaml
+      - esphome/nspanel_esphome_addon_upload_tft.yaml  # Upload TFT add-on
 
 esp32:
   framework:
