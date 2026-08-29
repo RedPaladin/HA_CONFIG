@@ -1,5 +1,5 @@
 blueprint:
-  name: NSPanel Easy Configuration (v2026.5.15)
+  name: NSPanel Easy Configuration (v2026.7.1)
   author: Edward Firmo (https://github.com/edwardtfn)
   description: '# NSPanel Easy Configuration via Blueprint
 
@@ -11,7 +11,7 @@ blueprint:
   source_url: https://raw.githubusercontent.com/edwardtfn/NSPanel-Easy/refs/tags/latest/nspanel_easy_blueprint.yaml
   domain: automation
   homeassistant:
-    min_version: 2026.3.0
+    min_version: 2026.5.0
   input:
     nspanel_name:
       name: NSPanel device (REQUIRED)
@@ -163,7 +163,10 @@ blueprint:
               sort: false
         temperature_unit:
           name: Temperature Unit
-          description: Select the temperature unit to display.
+          description: "Select the temperature unit for sensors provided by Home Assistant
+            without a pre-defined unit.\n\nIMPORTANT!\nThe panel's embedded sensor
+            is managed locally and requires its own setting as a substitution in your
+            panel's YAML:\n```yaml\nsubstitutions:\n  temp_units: \"°F\"\n\n```"
           default: °C
           selector:
             select:
@@ -545,8 +548,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         home_custom_button02:
           name: Home page - Custom button 2 - Entity
           description: 'Entity which should be controlled.
@@ -605,8 +608,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         home_custom_button03:
           name: Home page - Custom button 3 - Entity
           description: 'Entity which should be controlled.
@@ -665,8 +668,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         home_custom_button04:
           name: Home page - Custom button 4 - Entity
           description: 'Entity which should be controlled.
@@ -725,8 +728,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         home_custom_button05:
           name: Home page - Custom button 5 - Entity
           description: 'Entity which should be controlled.
@@ -785,8 +788,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         home_custom_button06:
           name: Home page - Custom button 6 - Entity
           description: 'Entity which should be controlled.
@@ -845,8 +848,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         alarm:
           name: Home page - Custom button 7 - Entity
           description: 'Entity which should be controlled.
@@ -905,8 +908,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
     home_page_general_settings:
       name: Home page - General settings
       icon: mdi:home
@@ -1347,8 +1350,8 @@ blueprint:
                 value: always
               - label: Never
                 value: never
-              multiple: false
               custom_value: false
+              multiple: false
               sort: false
     climate_page_settings:
       name: Climate page
@@ -1796,8 +1799,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         qrcode_entity:
           name: QR Code content entity
           description: 'Entity containing the value you want to display as QR code.
@@ -1827,8 +1830,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         home_button05_icon:
           name: Home page - QR Code - Icon
           description: Icon which should be displayed (Default mdi:qrcode-scan).
@@ -2022,8 +2025,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         left_button_hold_select:
           name: Left hardware button hold assignment
           description: Select what should happen on hold.
@@ -2033,8 +2036,8 @@ blueprint:
               options:
               - Default
               - Custom Action
-              multiple: false
               custom_value: false
+              multiple: false
               sort: false
         left_button_hold_custom_action:
           name: Left hardware button custom hold action
@@ -2065,6 +2068,7 @@ blueprint:
                 - cover
                 - fan
                 - input_boolean
+                - input_select
                 - light
                 - lock
                 - media_player
@@ -2140,8 +2144,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         right_button_hold_select:
           name: Right hardware button hold assignment
           description: Select what should happen on hold.
@@ -2151,8 +2155,8 @@ blueprint:
               options:
               - Default
               - Custom Action
-              multiple: false
               custom_value: false
+              multiple: false
               sort: false
         right_button_hold_custom_action:
           name: Right hardware button custom hold action
@@ -2183,6 +2187,7 @@ blueprint:
                 - cover
                 - fan
                 - input_boolean
+                - input_select
                 - light
                 - lock
                 - media_player
@@ -2234,8 +2239,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity01:
           name: Button page 1, Button 1 - Entity
           description: 'Entity to be controlled.
@@ -2278,8 +2283,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity01_icon:
           name: Button page 1, Button 1 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2308,6 +2313,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity01_custom_action:
+          name: Button page 1, Button 1 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity01_state_entity:
+          name: Button page 1, Button 1 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity01_state_value:
+          name: Button page 1, Button 1 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity02:
           name: Button page 1, Button 2 - Entity
           description: 'Entity to be controlled.
@@ -2350,8 +2400,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity02_icon:
           name: Button page 1, Button 2 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2380,6 +2430,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity02_custom_action:
+          name: Button page 1, Button 2 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity02_state_entity:
+          name: Button page 1, Button 2 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity02_state_value:
+          name: Button page 1, Button 2 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity03:
           name: Button page 1, Button 3 - Entity
           description: 'Entity to be controlled.
@@ -2422,8 +2517,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity03_icon:
           name: Button page 1, Button 3 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2452,6 +2547,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity03_custom_action:
+          name: Button page 1, Button 3 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity03_state_entity:
+          name: Button page 1, Button 3 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity03_state_value:
+          name: Button page 1, Button 3 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity04:
           name: Button page 1, Button 4 - Entity
           description: 'Entity to be controlled.
@@ -2494,8 +2634,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity04_icon:
           name: Button page 1, Button 4 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2524,6 +2664,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity04_custom_action:
+          name: Button page 1, Button 4 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity04_state_entity:
+          name: Button page 1, Button 4 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity04_state_value:
+          name: Button page 1, Button 4 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity05:
           name: Button page 1, Button 5 - Entity
           description: 'Entity to be controlled.
@@ -2566,8 +2751,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity05_icon:
           name: Button page 1, Button 5 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2596,6 +2781,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity05_custom_action:
+          name: Button page 1, Button 5 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity05_state_entity:
+          name: Button page 1, Button 5 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity05_state_value:
+          name: Button page 1, Button 5 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity06:
           name: Button page 1, Button 6 - Entity
           description: 'Entity to be controlled.
@@ -2638,8 +2868,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity06_icon:
           name: Button page 1, Button 6 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2668,6 +2898,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity06_custom_action:
+          name: Button page 1, Button 6 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity06_state_entity:
+          name: Button page 1, Button 6 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity06_state_value:
+          name: Button page 1, Button 6 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity07:
           name: Button page 1, Button 7 - Entity
           description: 'Entity to be controlled.
@@ -2710,8 +2985,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity07_icon:
           name: Button page 1, Button 7 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2740,6 +3015,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity07_custom_action:
+          name: Button page 1, Button 7 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity07_state_entity:
+          name: Button page 1, Button 7 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity07_state_value:
+          name: Button page 1, Button 7 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity08:
           name: Button page 1, Button 8 - Entity
           description: 'Entity to be controlled.
@@ -2782,8 +3102,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity08_icon:
           name: Button page 1, Button 8 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2812,6 +3132,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity08_custom_action:
+          name: Button page 1, Button 8 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity08_state_entity:
+          name: Button page 1, Button 8 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity08_state_value:
+          name: Button page 1, Button 8 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
     button_page_02:
       name: Button page 02
       icon: mdi:gesture-tap-button
@@ -2825,8 +3190,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity09:
           name: Button page 2, Button 1 - Entity
           description: 'Entity to be controlled.
@@ -2869,8 +3234,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity09_icon:
           name: Button page 2, Button 1 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2899,6 +3264,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity09_custom_action:
+          name: Button page 2, Button 1 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity09_state_entity:
+          name: Button page 2, Button 1 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity09_state_value:
+          name: Button page 2, Button 1 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity10:
           name: Button page 2, Button 2 - Entity
           description: 'Entity to be controlled.
@@ -2941,8 +3351,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity10_icon:
           name: Button page 2, Button 2 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -2971,6 +3381,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity10_custom_action:
+          name: Button page 2, Button 2 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity10_state_entity:
+          name: Button page 2, Button 2 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity10_state_value:
+          name: Button page 2, Button 2 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity11:
           name: Button page 2, Button 3 - Entity
           description: 'Entity to be controlled.
@@ -3013,8 +3468,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity11_icon:
           name: Button page 2, Button 3 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3043,6 +3498,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity11_custom_action:
+          name: Button page 2, Button 3 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity11_state_entity:
+          name: Button page 2, Button 3 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity11_state_value:
+          name: Button page 2, Button 3 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity12:
           name: Button page 2, Button 4 - Entity
           description: 'Entity to be controlled.
@@ -3085,8 +3585,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity12_icon:
           name: Button page 2, Button 4 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3115,6 +3615,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity12_custom_action:
+          name: Button page 2, Button 4 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity12_state_entity:
+          name: Button page 2, Button 4 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity12_state_value:
+          name: Button page 2, Button 4 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity13:
           name: Button page 2, Button 5 - Entity
           description: 'Entity to be controlled.
@@ -3157,8 +3702,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity13_icon:
           name: Button page 2, Button 5 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3187,6 +3732,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity13_custom_action:
+          name: Button page 2, Button 5 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity13_state_entity:
+          name: Button page 2, Button 5 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity13_state_value:
+          name: Button page 2, Button 5 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity14:
           name: Button page 2, Button 6 - Entity
           description: 'Entity to be controlled.
@@ -3229,8 +3819,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity14_icon:
           name: Button page 2, Button 6 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3259,6 +3849,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity14_custom_action:
+          name: Button page 2, Button 6 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity14_state_entity:
+          name: Button page 2, Button 6 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity14_state_value:
+          name: Button page 2, Button 6 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity15:
           name: Button page 2, Button 7 - Entity
           description: 'Entity to be controlled.
@@ -3301,8 +3936,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity15_icon:
           name: Button page 2, Button 7 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3331,6 +3966,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity15_custom_action:
+          name: Button page 2, Button 7 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity15_state_entity:
+          name: Button page 2, Button 7 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity15_state_value:
+          name: Button page 2, Button 7 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity16:
           name: Button page 2, Button 8 - Entity
           description: 'Entity to be controlled.
@@ -3373,8 +4053,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity16_icon:
           name: Button page 2, Button 8 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3403,6 +4083,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity16_custom_action:
+          name: Button page 2, Button 8 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity16_state_entity:
+          name: Button page 2, Button 8 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity16_state_value:
+          name: Button page 2, Button 8 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
     button_page_03:
       name: Button page 03
       icon: mdi:gesture-tap-button
@@ -3416,8 +4141,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity17:
           name: Button page 3, Button 1 - Entity
           description: 'Entity to be controlled.
@@ -3460,8 +4185,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity17_icon:
           name: Button page 3, Button 1 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3490,6 +4215,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity17_custom_action:
+          name: Button page 3, Button 1 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity17_state_entity:
+          name: Button page 3, Button 1 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity17_state_value:
+          name: Button page 3, Button 1 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity18:
           name: Button page 3, Button 2 - Entity
           description: 'Entity to be controlled.
@@ -3532,8 +4302,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity18_icon:
           name: Button page 3, Button 2 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3562,6 +4332,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity18_custom_action:
+          name: Button page 3, Button 2 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity18_state_entity:
+          name: Button page 3, Button 2 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity18_state_value:
+          name: Button page 3, Button 2 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity19:
           name: Button page 3, Button 3 - Entity
           description: 'Entity to be controlled.
@@ -3604,8 +4419,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity19_icon:
           name: Button page 3, Button 3 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3634,6 +4449,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity19_custom_action:
+          name: Button page 3, Button 3 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity19_state_entity:
+          name: Button page 3, Button 3 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity19_state_value:
+          name: Button page 3, Button 3 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity20:
           name: Button page 3, Button 4 - Entity
           description: 'Entity to be controlled.
@@ -3676,8 +4536,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity20_icon:
           name: Button page 3, Button 4 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3706,6 +4566,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity20_custom_action:
+          name: Button page 3, Button 4 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity20_state_entity:
+          name: Button page 3, Button 4 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity20_state_value:
+          name: Button page 3, Button 4 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity21:
           name: Button page 3, Button 5 - Entity
           description: 'Entity to be controlled.
@@ -3748,8 +4653,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity21_icon:
           name: Button page 3, Button 5 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3778,6 +4683,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity21_custom_action:
+          name: Button page 3, Button 5 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity21_state_entity:
+          name: Button page 3, Button 5 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity21_state_value:
+          name: Button page 3, Button 5 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity22:
           name: Button page 3, Button 6 - Entity
           description: 'Entity to be controlled.
@@ -3820,8 +4770,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity22_icon:
           name: Button page 3, Button 6 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3850,6 +4800,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity22_custom_action:
+          name: Button page 3, Button 6 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity22_state_entity:
+          name: Button page 3, Button 6 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity22_state_value:
+          name: Button page 3, Button 6 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity23:
           name: Button page 3, Button 7 - Entity
           description: 'Entity to be controlled.
@@ -3892,8 +4887,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity23_icon:
           name: Button page 3, Button 7 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3922,6 +4917,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity23_custom_action:
+          name: Button page 3, Button 7 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity23_state_entity:
+          name: Button page 3, Button 7 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity23_state_value:
+          name: Button page 3, Button 7 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity24:
           name: Button page 3, Button 8 - Entity
           description: 'Entity to be controlled.
@@ -3964,8 +5004,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity24_icon:
           name: Button page 3, Button 8 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -3994,6 +5034,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity24_custom_action:
+          name: Button page 3, Button 8 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity24_state_entity:
+          name: Button page 3, Button 8 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity24_state_value:
+          name: Button page 3, Button 8 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
     button_page_04:
       name: Button page 04
       icon: mdi:gesture-tap-button
@@ -4007,8 +5092,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity25:
           name: Button page 4, Button 1 - Entity
           description: 'Entity to be controlled.
@@ -4051,8 +5136,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity25_icon:
           name: Button page 4, Button 1 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4081,6 +5166,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity25_custom_action:
+          name: Button page 4, Button 1 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity25_state_entity:
+          name: Button page 4, Button 1 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity25_state_value:
+          name: Button page 4, Button 1 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity26:
           name: Button page 4, Button 2 - Entity
           description: 'Entity to be controlled.
@@ -4123,8 +5253,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity26_icon:
           name: Button page 4, Button 2 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4153,6 +5283,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity26_custom_action:
+          name: Button page 4, Button 2 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity26_state_entity:
+          name: Button page 4, Button 2 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity26_state_value:
+          name: Button page 4, Button 2 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity27:
           name: Button page 4, Button 3 - Entity
           description: 'Entity to be controlled.
@@ -4195,8 +5370,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity27_icon:
           name: Button page 4, Button 3 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4225,6 +5400,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity27_custom_action:
+          name: Button page 4, Button 3 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity27_state_entity:
+          name: Button page 4, Button 3 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity27_state_value:
+          name: Button page 4, Button 3 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity28:
           name: Button page 4, Button 4 - Entity
           description: 'Entity to be controlled.
@@ -4267,8 +5487,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity28_icon:
           name: Button page 4, Button 4 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4297,6 +5517,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity28_custom_action:
+          name: Button page 4, Button 4 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity28_state_entity:
+          name: Button page 4, Button 4 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity28_state_value:
+          name: Button page 4, Button 4 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity29:
           name: Button page 4, Button 5 - Entity
           description: 'Entity to be controlled.
@@ -4339,8 +5604,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity29_icon:
           name: Button page 4, Button 5 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4369,6 +5634,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity29_custom_action:
+          name: Button page 4, Button 5 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity29_state_entity:
+          name: Button page 4, Button 5 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity29_state_value:
+          name: Button page 4, Button 5 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity30:
           name: Button page 4, Button 6 - Entity
           description: 'Entity to be controlled.
@@ -4411,8 +5721,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity30_icon:
           name: Button page 4, Button 6 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4441,6 +5751,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity30_custom_action:
+          name: Button page 4, Button 6 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity30_state_entity:
+          name: Button page 4, Button 6 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity30_state_value:
+          name: Button page 4, Button 6 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity31:
           name: Button page 4, Button 7 - Entity
           description: 'Entity to be controlled.
@@ -4483,8 +5838,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity31_icon:
           name: Button page 4, Button 7 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4513,6 +5868,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity31_custom_action:
+          name: Button page 4, Button 7 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity31_state_entity:
+          name: Button page 4, Button 7 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity31_state_value:
+          name: Button page 4, Button 7 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
         entity32:
           name: Button page 4, Button 8 - Entity
           description: 'Entity to be controlled.
@@ -4555,8 +5955,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entity32_icon:
           name: Button page 4, Button 8 - Icon
           description: '***Icon Display:** If not specified, an attribute-defined
@@ -4585,6 +5985,51 @@ blueprint:
             '
           selector:
             boolean: {}
+        entity32_custom_action:
+          name: Button page 4, Button 8 - Custom action
+          description: Additional action(s) to run when the button is clicked.
+          default: []
+          selector:
+            action: {}
+        entity32_state_entity:
+          name: Button page 4, Button 8 - State Indicator Entity
+          description: 'Specifies the entity reflecting the state of this button''s
+            indicator. If not set, the state of the controlled entity itself will
+            dictate the indicator''s state.
+
+            '
+          default: *id001
+          selector:
+            entity:
+              multiple: false
+              filter:
+              - domain:
+                - alarm_control_panel
+                - binary_sensor
+                - climate
+                - cover
+                - fan
+                - input_boolean
+                - input_select
+                - light
+                - lock
+                - media_player
+                - remote
+                - switch
+                - water_heater
+              reorder: false
+        entity32_state_value:
+          name: Button page 4, Button 8 - State Value
+          description: 'When set, the button indicator is on when the State Indicator
+            Entity''s state matches this value. When empty, the indicator uses standard
+            on/off logic.
+
+            '
+          default: ''
+          selector:
+            text:
+              multiline: false
+              multiple: false
     entities_pages:
       name: Entities pages - Overall
       icon: mdi:format-list-bulleted-square
@@ -4648,8 +6093,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity01:
           name: Entity page 1, Row 1 - Entity
           description: 'Choose an entity to display in this position. If left blank,
@@ -4668,8 +6113,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity01_icon:
           name: Entity page 1, Row 1 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4695,8 +6140,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity02_icon:
           name: Entity page 1, Row 2 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4722,8 +6167,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity03_icon:
           name: Entity page 1, Row 3 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4749,8 +6194,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity04_icon:
           name: Entity page 1, Row 4 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4776,8 +6221,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity05_icon:
           name: Entity page 1, Row 5 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4803,8 +6248,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity06_icon:
           name: Entity page 1, Row 6 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4830,8 +6275,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity07_icon:
           name: Entity page 1, Row 7 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4857,8 +6302,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity08_icon:
           name: Entity page 1, Row 8 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4879,8 +6324,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity09:
           name: Entity page 2, Row 1 - Entity
           description: 'Choose an entity to display in this position. If left blank,
@@ -4899,8 +6344,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity09_icon:
           name: Entity page 2, Row 1 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4926,8 +6371,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity10_icon:
           name: Entity page 2, Row 2 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4953,8 +6398,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity11_icon:
           name: Entity page 2, Row 3 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -4980,8 +6425,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity12_icon:
           name: Entity page 2, Row 4 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5007,8 +6452,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity13_icon:
           name: Entity page 2, Row 5 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5034,8 +6479,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity14_icon:
           name: Entity page 2, Row 6 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5061,8 +6506,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity15_icon:
           name: Entity page 2, Row 7 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5088,8 +6533,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity16_icon:
           name: Entity page 2, Row 8 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5110,8 +6555,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity17:
           name: Entity page 3, Row 1 - Entity
           description: 'Choose an entity to display in this position. If left blank,
@@ -5130,8 +6575,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity17_icon:
           name: Entity page 3, Row 1 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5157,8 +6602,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity18_icon:
           name: Entity page 3, Row 2 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5184,8 +6629,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity19_icon:
           name: Entity page 3, Row 3 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5211,8 +6656,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity20_icon:
           name: Entity page 3, Row 4 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5238,8 +6683,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity21_icon:
           name: Entity page 3, Row 5 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5265,8 +6710,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity22_icon:
           name: Entity page 3, Row 6 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5292,8 +6737,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity23_icon:
           name: Entity page 3, Row 7 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5319,8 +6764,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity24_icon:
           name: Entity page 3, Row 8 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5341,8 +6786,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity25:
           name: Entity page 4, Row 1 - Entity
           description: 'Choose an entity to display in this position. If left blank,
@@ -5361,8 +6806,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity25_icon:
           name: Entity page 4, Row 1 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5388,8 +6833,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity26_icon:
           name: Entity page 4, Row 2 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5415,8 +6860,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity27_icon:
           name: Entity page 4, Row 3 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5442,8 +6887,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity28_icon:
           name: Entity page 4, Row 4 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5469,8 +6914,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity29_icon:
           name: Entity page 4, Row 5 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5496,8 +6941,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity30_icon:
           name: Entity page 4, Row 6 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5523,8 +6968,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity31_icon:
           name: Entity page 4, Row 7 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5550,8 +6995,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         entities_entity32_icon:
           name: Entity page 4, Row 8 - Icon
           description: Set a custom icon for this entity. If not set, the entity's
@@ -5603,8 +7048,8 @@ blueprint:
           default: Utilities Dashboard
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_icon:
           name: Utilities page - Icon
           description: Select the icon to be shown in the top left corner of the page.
@@ -5617,8 +7062,8 @@ blueprint:
           default: Home
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_home_icon:
           name: Utilities page - Home - Icon
           description: 'Select the icon to be shown in the Home area. (Default: mdi:home-lightning-bolt-outline).'
@@ -5660,8 +7105,8 @@ blueprint:
           default: Grid
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_grid_icon:
           name: Utilities page - Grid - Icon
           description: 'Select the icon to be shown in the Grid area. (Default: mdi:transmission-tower).'
@@ -5726,8 +7171,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_group01_icon:
           name: Utilities page - Group 1 - Icon
           description: Select the icon to be shown in the Group 1 area.
@@ -5790,8 +7235,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_group02_icon:
           name: Utilities page - Group 2 - Icon
           description: Select the icon to be shown in the Group 2 area.
@@ -5854,8 +7299,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_group03_icon:
           name: Utilities page - Group 3 - Icon
           description: Select the icon to be shown in the Group 3 area.
@@ -5918,8 +7363,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_group04_icon:
           name: Utilities page - Group 4 - Icon
           description: Select the icon to be shown in the Group 4 area.
@@ -5982,8 +7427,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_group05_icon:
           name: Utilities page - Group 5 - Icon
           description: Select the icon to be shown in the Group 5 area.
@@ -6046,8 +7491,8 @@ blueprint:
           default: ''
           selector:
             text:
-              multiple: false
               multiline: false
+              multiple: false
         utilities_page01_group06_icon:
           name: Utilities page - Group 6 - Icon
           description: Select the icon to be shown in the Group 6 area.
@@ -6443,7 +7888,7 @@ trigger_variables:
   sun_is_up: "{{\n  sun_state_list | first == \"above_horizon\"\n  if sun_state_list
     | length > 0\n  else true\n}}\n"
 variables:
-  blueprint_version: 2026.5.15
+  blueprint_version: 2026.7.1
   pages:
     current: '{{ states(currentpage) }}'
     alarm: alarm
@@ -6554,6 +7999,38 @@ triggers:
     id: trigger_buttonpage_state
     trigger: state
     entity_id: !input entity08
+  - alias: Button 01 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity01_state_entity
+  - alias: Button 02 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity02_state_entity
+  - alias: Button 03 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity03_state_entity
+  - alias: Button 04 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity04_state_entity
+  - alias: Button 05 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity05_state_entity
+  - alias: Button 06 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity06_state_entity
+  - alias: Button 07 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity07_state_entity
+  - alias: Button 08 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity08_state_entity
 - triggers:
   - alias: Button 01
     id: trigger_buttonpage_state
@@ -6587,6 +8064,38 @@ triggers:
     id: trigger_buttonpage_state
     trigger: state
     entity_id: !input entity16
+  - alias: Button 01 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity09_state_entity
+  - alias: Button 02 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity10_state_entity
+  - alias: Button 03 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity11_state_entity
+  - alias: Button 04 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity12_state_entity
+  - alias: Button 05 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity13_state_entity
+  - alias: Button 06 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity14_state_entity
+  - alias: Button 07 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity15_state_entity
+  - alias: Button 08 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity16_state_entity
 - triggers:
   - alias: Button 01
     id: trigger_buttonpage_state
@@ -6620,6 +8129,38 @@ triggers:
     id: trigger_buttonpage_state
     trigger: state
     entity_id: !input entity24
+  - alias: Button 01 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity17_state_entity
+  - alias: Button 02 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity18_state_entity
+  - alias: Button 03 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity19_state_entity
+  - alias: Button 04 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity20_state_entity
+  - alias: Button 05 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity21_state_entity
+  - alias: Button 06 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity22_state_entity
+  - alias: Button 07 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity23_state_entity
+  - alias: Button 08 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity24_state_entity
 - triggers:
   - alias: Button 01
     id: trigger_buttonpage_state
@@ -6653,6 +8194,38 @@ triggers:
     id: trigger_buttonpage_state
     trigger: state
     entity_id: !input entity32
+  - alias: Button 01 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity25_state_entity
+  - alias: Button 02 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity26_state_entity
+  - alias: Button 03 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity27_state_entity
+  - alias: Button 04 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity28_state_entity
+  - alias: Button 05 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity29_state_entity
+  - alias: Button 06 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity30_state_entity
+  - alias: Button 07 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity31_state_entity
+  - alias: Button 08 - State entity
+    id: trigger_buttonpage_state
+    trigger: state
+    entity_id: !input entity32_state_entity
 - triggers:
   - alias: Entity 01
     id: trigger_entitypage_state
@@ -15219,6 +16792,8 @@ actions:
         icon: !input entity01_icon
         icon_color_rgb: !input entity01_icon_color
         confirm: !input entity01_confirm
+        state_entity: !input entity01_state_entity
+        state_value: !input entity01_state_value
         page: buttonpage01
         component: button01
       - entity: !input entity02
@@ -15226,6 +16801,8 @@ actions:
         icon: !input entity02_icon
         icon_color_rgb: !input entity02_icon_color
         confirm: !input entity02_confirm
+        state_entity: !input entity02_state_entity
+        state_value: !input entity02_state_value
         page: buttonpage01
         component: button02
       - entity: !input entity03
@@ -15233,6 +16810,8 @@ actions:
         icon: !input entity03_icon
         icon_color_rgb: !input entity03_icon_color
         confirm: !input entity03_confirm
+        state_entity: !input entity03_state_entity
+        state_value: !input entity03_state_value
         page: buttonpage01
         component: button03
       - entity: !input entity04
@@ -15240,6 +16819,8 @@ actions:
         icon: !input entity04_icon
         icon_color_rgb: !input entity04_icon_color
         confirm: !input entity04_confirm
+        state_entity: !input entity04_state_entity
+        state_value: !input entity04_state_value
         page: buttonpage01
         component: button04
       - entity: !input entity05
@@ -15247,6 +16828,8 @@ actions:
         icon: !input entity05_icon
         icon_color_rgb: !input entity05_icon_color
         confirm: !input entity05_confirm
+        state_entity: !input entity05_state_entity
+        state_value: !input entity05_state_value
         page: buttonpage01
         component: button05
       - entity: !input entity06
@@ -15254,6 +16837,8 @@ actions:
         icon: !input entity06_icon
         icon_color_rgb: !input entity06_icon_color
         confirm: !input entity06_confirm
+        state_entity: !input entity06_state_entity
+        state_value: !input entity06_state_value
         page: buttonpage01
         component: button06
       - entity: !input entity07
@@ -15261,6 +16846,8 @@ actions:
         icon: !input entity07_icon
         icon_color_rgb: !input entity07_icon_color
         confirm: !input entity07_confirm
+        state_entity: !input entity07_state_entity
+        state_value: !input entity07_state_value
         page: buttonpage01
         component: button07
       - entity: !input entity08
@@ -15268,6 +16855,8 @@ actions:
         icon: !input entity08_icon
         icon_color_rgb: !input entity08_icon_color
         confirm: !input entity08_confirm
+        state_entity: !input entity08_state_entity
+        state_value: !input entity08_state_value
         page: buttonpage01
         component: button08
       - entity: !input entity09
@@ -15275,6 +16864,8 @@ actions:
         icon: !input entity09_icon
         icon_color_rgb: !input entity09_icon_color
         confirm: !input entity09_confirm
+        state_entity: !input entity09_state_entity
+        state_value: !input entity09_state_value
         page: buttonpage02
         component: button01
       - entity: !input entity10
@@ -15282,6 +16873,8 @@ actions:
         icon: !input entity10_icon
         icon_color_rgb: !input entity10_icon_color
         confirm: !input entity10_confirm
+        state_entity: !input entity10_state_entity
+        state_value: !input entity10_state_value
         page: buttonpage02
         component: button02
       - entity: !input entity11
@@ -15289,6 +16882,8 @@ actions:
         icon: !input entity11_icon
         icon_color_rgb: !input entity11_icon_color
         confirm: !input entity11_confirm
+        state_entity: !input entity11_state_entity
+        state_value: !input entity11_state_value
         page: buttonpage02
         component: button03
       - entity: !input entity12
@@ -15296,6 +16891,8 @@ actions:
         icon: !input entity12_icon
         icon_color_rgb: !input entity12_icon_color
         confirm: !input entity12_confirm
+        state_entity: !input entity12_state_entity
+        state_value: !input entity12_state_value
         page: buttonpage02
         component: button04
       - entity: !input entity13
@@ -15303,6 +16900,8 @@ actions:
         icon: !input entity13_icon
         icon_color_rgb: !input entity13_icon_color
         confirm: !input entity13_confirm
+        state_entity: !input entity13_state_entity
+        state_value: !input entity13_state_value
         page: buttonpage02
         component: button05
       - entity: !input entity14
@@ -15310,6 +16909,8 @@ actions:
         icon: !input entity14_icon
         icon_color_rgb: !input entity14_icon_color
         confirm: !input entity14_confirm
+        state_entity: !input entity14_state_entity
+        state_value: !input entity14_state_value
         page: buttonpage02
         component: button06
       - entity: !input entity15
@@ -15317,6 +16918,8 @@ actions:
         icon: !input entity15_icon
         icon_color_rgb: !input entity15_icon_color
         confirm: !input entity15_confirm
+        state_entity: !input entity15_state_entity
+        state_value: !input entity15_state_value
         page: buttonpage02
         component: button07
       - entity: !input entity16
@@ -15324,6 +16927,8 @@ actions:
         icon: !input entity16_icon
         icon_color_rgb: !input entity16_icon_color
         confirm: !input entity16_confirm
+        state_entity: !input entity16_state_entity
+        state_value: !input entity16_state_value
         page: buttonpage02
         component: button08
       - entity: !input entity17
@@ -15331,6 +16936,8 @@ actions:
         icon: !input entity17_icon
         icon_color_rgb: !input entity17_icon_color
         confirm: !input entity17_confirm
+        state_entity: !input entity17_state_entity
+        state_value: !input entity17_state_value
         page: buttonpage03
         component: button01
       - entity: !input entity18
@@ -15338,6 +16945,8 @@ actions:
         icon: !input entity18_icon
         icon_color_rgb: !input entity18_icon_color
         confirm: !input entity18_confirm
+        state_entity: !input entity18_state_entity
+        state_value: !input entity18_state_value
         page: buttonpage03
         component: button02
       - entity: !input entity19
@@ -15345,6 +16954,8 @@ actions:
         icon: !input entity19_icon
         icon_color_rgb: !input entity19_icon_color
         confirm: !input entity19_confirm
+        state_entity: !input entity19_state_entity
+        state_value: !input entity19_state_value
         page: buttonpage03
         component: button03
       - entity: !input entity20
@@ -15352,6 +16963,8 @@ actions:
         icon: !input entity20_icon
         icon_color_rgb: !input entity20_icon_color
         confirm: !input entity20_confirm
+        state_entity: !input entity20_state_entity
+        state_value: !input entity20_state_value
         page: buttonpage03
         component: button04
       - entity: !input entity21
@@ -15359,6 +16972,8 @@ actions:
         icon: !input entity21_icon
         icon_color_rgb: !input entity21_icon_color
         confirm: !input entity21_confirm
+        state_entity: !input entity21_state_entity
+        state_value: !input entity21_state_value
         page: buttonpage03
         component: button05
       - entity: !input entity22
@@ -15366,6 +16981,8 @@ actions:
         icon: !input entity22_icon
         icon_color_rgb: !input entity22_icon_color
         confirm: !input entity22_confirm
+        state_entity: !input entity22_state_entity
+        state_value: !input entity22_state_value
         page: buttonpage03
         component: button06
       - entity: !input entity23
@@ -15373,6 +16990,8 @@ actions:
         icon: !input entity23_icon
         icon_color_rgb: !input entity23_icon_color
         confirm: !input entity23_confirm
+        state_entity: !input entity23_state_entity
+        state_value: !input entity23_state_value
         page: buttonpage03
         component: button07
       - entity: !input entity24
@@ -15380,6 +16999,8 @@ actions:
         icon: !input entity24_icon
         icon_color_rgb: !input entity24_icon_color
         confirm: !input entity24_confirm
+        state_entity: !input entity24_state_entity
+        state_value: !input entity24_state_value
         page: buttonpage03
         component: button08
       - entity: !input entity25
@@ -15387,6 +17008,8 @@ actions:
         icon: !input entity25_icon
         icon_color_rgb: !input entity25_icon_color
         confirm: !input entity25_confirm
+        state_entity: !input entity25_state_entity
+        state_value: !input entity25_state_value
         page: buttonpage04
         component: button01
       - entity: !input entity26
@@ -15394,6 +17017,8 @@ actions:
         icon: !input entity26_icon
         icon_color_rgb: !input entity26_icon_color
         confirm: !input entity26_confirm
+        state_entity: !input entity26_state_entity
+        state_value: !input entity26_state_value
         page: buttonpage04
         component: button02
       - entity: !input entity27
@@ -15401,6 +17026,8 @@ actions:
         icon: !input entity27_icon
         icon_color_rgb: !input entity27_icon_color
         confirm: !input entity27_confirm
+        state_entity: !input entity27_state_entity
+        state_value: !input entity27_state_value
         page: buttonpage04
         component: button03
       - entity: !input entity28
@@ -15408,6 +17035,8 @@ actions:
         icon: !input entity28_icon
         icon_color_rgb: !input entity28_icon_color
         confirm: !input entity28_confirm
+        state_entity: !input entity28_state_entity
+        state_value: !input entity28_state_value
         page: buttonpage04
         component: button04
       - entity: !input entity29
@@ -15415,6 +17044,8 @@ actions:
         icon: !input entity29_icon
         icon_color_rgb: !input entity29_icon_color
         confirm: !input entity29_confirm
+        state_entity: !input entity29_state_entity
+        state_value: !input entity29_state_value
         page: buttonpage04
         component: button05
       - entity: !input entity30
@@ -15422,6 +17053,8 @@ actions:
         icon: !input entity30_icon
         icon_color_rgb: !input entity30_icon_color
         confirm: !input entity30_confirm
+        state_entity: !input entity30_state_entity
+        state_value: !input entity30_state_value
         page: buttonpage04
         component: button06
       - entity: !input entity31
@@ -15429,6 +17062,8 @@ actions:
         icon: !input entity31_icon
         icon_color_rgb: !input entity31_icon_color
         confirm: !input entity31_confirm
+        state_entity: !input entity31_state_entity
+        state_value: !input entity31_state_value
         page: buttonpage04
         component: button07
       - entity: !input entity32
@@ -15436,6 +17071,8 @@ actions:
         icon: !input entity32_icon
         icon_color_rgb: !input entity32_icon_color
         confirm: !input entity32_confirm
+        state_entity: !input entity32_state_entity
+        state_value: !input entity32_state_value
         page: buttonpage04
         component: button08
     entities_pages:
@@ -16050,7 +17687,7 @@ actions:
         - '{{ nspanel_event.step is defined and nspanel_event.step in ["setup", "start",
           "timeout"] }}'
         sequence:
-        - &id018
+        - &id019
           sequence:
           - variables:
               global_settings_setup: "{{\n  not (\n    nspanel_event is defined and\n
@@ -16866,7 +18503,7 @@ actions:
         - choose:
           - alias: Home page
             conditions: '{{ nspanel_event.page == pages.home }}'
-            sequence: &id019
+            sequence: &id020
             - &id045
               action: esphome.{{ action_prefix }}_component_val
               data:
@@ -17191,7 +18828,7 @@ actions:
                   - *id004
           - alias: Button pages
             conditions: '{{ nspanel_event.page in pages.buttonpages }}'
-            sequence: &id020
+            sequence: &id021
             - &id012
               variables:
                 event_page: '{{ nspanel_event.page if nspanel_event is defined and
@@ -17218,11 +18855,15 @@ actions:
                     \"defined\")\n  | selectattr(\"page\", \"eq\", event_page)\n  |
                     selectattr(\"entity\", \"defined\")\n  | rejectattr(\"entity\",
                     \"eq\", [])\n  | list\n}}\n"
-                  sequence: &id024
+                  sequence: &id015
                   - condition: '{{ repeat.item.entity is defined and repeat.item.entity
                       is string and repeat.item.entity | length > 0 }}'
                   - variables:
                       entity_id: '{{ repeat.item.entity }}'
+                      state_entity_id: "{{\n  repeat.item.state_entity\n  if repeat.item.state_entity
+                        is defined\n      and repeat.item.state_entity is string\n
+                        \     and repeat.item.state_entity | length > 3\n      and
+                        \".\" in repeat.item.state_entity\n  else repeat.item.entity\n}}\n"
                       overlap:
                         icon: "{{\n  repeat.item.icon\n  if\n    repeat.item.icon
                           is defined and\n    repeat.item.icon is string and\n    repeat.item.icon
@@ -17237,12 +18878,19 @@ actions:
                   - variables:
                       current_entity_state_available: '{{ entity_state not in ["unavailable"]
                         }}'
-                      btn_state: "{{\n  (entity_state in enum.states.on and entity_domain
-                        not in [\"automation\"])\n  or (entity_domain == \"climate\"
-                        and entity_state != \"off\")\n  or (entity_domain in [\"automation\",
-                        \"button\", \"input_button\", \"remote\", \"scene\", \"script\"]\n
-                        \     and not page_constructor\n      and trigger.entity_id
-                        == repeat.item.entity)\n}}\n"
+                      state_entity_state: '{{ states(state_entity_id) if state_entity_id
+                        != entity_id else entity_state }}'
+                      state_value: "{{\n  repeat.item.state_value\n  if repeat.item.state_value
+                        is defined\n      and repeat.item.state_value is string\n
+                        \     and repeat.item.state_value | length > 0\n  else \"\"\n}}\n"
+                      btn_state: "{% if state_value | length > 0 %}\n  {{ state_entity_state
+                        == state_value }}\n{% else %}\n  {{\n    (state_entity_state
+                        in enum.states.on and entity_domain not in [\"automation\"])\n
+                        \   or (entity_domain == \"climate\" and state_entity_state
+                        != \"off\")\n    or (entity_domain in [\"automation\", \"button\",
+                        \"input_button\", \"remote\", \"scene\", \"script\"]\n        and
+                        not page_constructor\n        and trigger.entity_id in [repeat.item.entity,
+                        state_entity_id])\n  }}\n{% endif %}\n"
                       btn_bri_txt: "{% if not has_value(entity_id) %} 0 {% elif entity_domain
                         == \"light\" and entity_state == \"on\" %}\n  {% set entity_brightness
                         = state_attr(entity_id, \"brightness\") %}\n  {% set entity_brightness_index
@@ -17290,7 +18938,9 @@ actions:
                     - '{{ entity_domain in ["automation", "button", "input_button",
                       "remote", "scene", "script"] }}'
                     - '{{ not page_constructor }}'
-                    - '{{ trigger.entity_id == repeat.item.entity }}'
+                    - '{{ trigger.entity_id in [repeat.item.entity, state_entity_id]
+                      }}'
+                    - '{{ state_entity_id == entity_id }}'
                     then:
                     - delay:
                         milliseconds: 800
@@ -17366,7 +19016,7 @@ actions:
                     txt_list: '{{ txt_list }}'
                   continue_on_error: true
                 - *id004
-            - &id016
+            - &id017
               alias: variables_light_modes
               variables:
                 entity_id_valid: '{{ entity_id is defined and entity_id is string
@@ -17380,8 +19030,9 @@ actions:
                 supported_color_modes: "{{\n  state_attr(entity_id, \"supported_color_modes\")
                   | default([], true)\n  if entity_domain_is_light\n  else []\n}}"
                 color_mode_brightness: "{{\n  entity_domain_is_light and\n  (\n    supported_features
-                  | bitwise_and(1) > 0 or\n    enum.ColorMode.BRIGHTNESS in supported_color_modes
-                  or\n    \"brightness\" in supported_color_modes or\n    supported_color_modes\n
+                  | bitwise_and(1) > 0 or\n    \"brightness\" in states[entity_id].attributes
+                  or\n    enum.ColorMode.BRIGHTNESS in supported_color_modes or\n
+                  \   \"brightness\" in supported_color_modes or\n    supported_color_modes\n
                   \     | map(attribute=\"value\") | list\n      | select(\"in\",
                   [\"brightness\"])\n      | list | length > 0 or\n    state_attr(entity_id,
                   \"brightness\") | int(-1) >= 0\n  )\n}}"
@@ -17838,7 +19489,7 @@ actions:
                   - '{{ nspanel_event.type != "page_changed" }}'
           - alias: Alarm settings page
             conditions: '{{ nspanel_event.page == pages.alarm }}'
-            sequence: &id022
+            sequence: &id023
             - *id006
             - variables:
                 alarm_entity: "{{\n  entity_id\n  if (\n    entity_id is string\n
@@ -18065,7 +19716,7 @@ actions:
             - &id038
               alias: Climate custom buttons
               sequence:
-              - &id015
+              - &id016
                 variables:
                   climate_custom_buttons:
                   - entity: !input climate_button08
@@ -18106,7 +19757,7 @@ actions:
           - alias: Button page
             conditions:
             - '{{ nspanel_event.page == pages.button }}'
-            sequence: &id023
+            sequence: &id024
             - *id006
             - condition:
               - '{{ entity_id is defined }}'
@@ -18399,7 +20050,7 @@ actions:
                   - *id004
           - alias: Entity pages
             conditions: '{{ nspanel_event.page in pages.entitypages }}'
-            sequence: &id021
+            sequence: &id022
             - &id040
               variables:
                 event_page: '{{ nspanel_event.page if nspanel_event is defined and
@@ -19305,14 +20956,187 @@ actions:
                 - '{{ nspanel_event.command == "short_click" }}'
                 - '{{ entity_domain not in domains_functionality.detailed_only }}'
                 sequence:
+                - alias: Custom click action
+                  choose:
+                  - alias: Custom action - Button 01
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button01" }}'
+                    sequence: !input entity01_custom_action
+                  - alias: Custom action - Button 02
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button02" }}'
+                    sequence: !input entity02_custom_action
+                  - alias: Custom action - Button 03
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button03" }}'
+                    sequence: !input entity03_custom_action
+                  - alias: Custom action - Button 04
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button04" }}'
+                    sequence: !input entity04_custom_action
+                  - alias: Custom action - Button 05
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button05" }}'
+                    sequence: !input entity05_custom_action
+                  - alias: Custom action - Button 06
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button06" }}'
+                    sequence: !input entity06_custom_action
+                  - alias: Custom action - Button 07
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button07" }}'
+                    sequence: !input entity07_custom_action
+                  - alias: Custom action - Button 08
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage01" }}'
+                    - '{{ nspanel_event.component == "button08" }}'
+                    sequence: !input entity08_custom_action
+                  - alias: Custom action - Button 09
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button01" }}'
+                    sequence: !input entity09_custom_action
+                  - alias: Custom action - Button 10
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button02" }}'
+                    sequence: !input entity10_custom_action
+                  - alias: Custom action - Button 11
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button03" }}'
+                    sequence: !input entity11_custom_action
+                  - alias: Custom action - Button 12
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button04" }}'
+                    sequence: !input entity12_custom_action
+                  - alias: Custom action - Button 13
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button05" }}'
+                    sequence: !input entity13_custom_action
+                  - alias: Custom action - Button 14
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button06" }}'
+                    sequence: !input entity14_custom_action
+                  - alias: Custom action - Button 15
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button07" }}'
+                    sequence: !input entity15_custom_action
+                  - alias: Custom action - Button 16
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage02" }}'
+                    - '{{ nspanel_event.component == "button08" }}'
+                    sequence: !input entity16_custom_action
+                  - alias: Custom action - Button 17
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button01" }}'
+                    sequence: !input entity17_custom_action
+                  - alias: Custom action - Button 18
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button02" }}'
+                    sequence: !input entity18_custom_action
+                  - alias: Custom action - Button 19
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button03" }}'
+                    sequence: !input entity19_custom_action
+                  - alias: Custom action - Button 20
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button04" }}'
+                    sequence: !input entity20_custom_action
+                  - alias: Custom action - Button 21
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button05" }}'
+                    sequence: !input entity21_custom_action
+                  - alias: Custom action - Button 22
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button06" }}'
+                    sequence: !input entity22_custom_action
+                  - alias: Custom action - Button 23
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button07" }}'
+                    sequence: !input entity23_custom_action
+                  - alias: Custom action - Button 24
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage03" }}'
+                    - '{{ nspanel_event.component == "button08" }}'
+                    sequence: !input entity24_custom_action
+                  - alias: Custom action - Button 25
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button01" }}'
+                    sequence: !input entity25_custom_action
+                  - alias: Custom action - Button 26
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button02" }}'
+                    sequence: !input entity26_custom_action
+                  - alias: Custom action - Button 27
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button03" }}'
+                    sequence: !input entity27_custom_action
+                  - alias: Custom action - Button 28
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button04" }}'
+                    sequence: !input entity28_custom_action
+                  - alias: Custom action - Button 29
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button05" }}'
+                    sequence: !input entity29_custom_action
+                  - alias: Custom action - Button 30
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button06" }}'
+                    sequence: !input entity30_custom_action
+                  - alias: Custom action - Button 31
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button07" }}'
+                    sequence: !input entity31_custom_action
+                  - alias: Custom action - Button 32
+                    conditions:
+                    - '{{ nspanel_event.page == "buttonpage04" }}'
+                    - '{{ nspanel_event.component == "button08" }}'
+                    sequence: !input entity32_custom_action
                 - *id014
+                - alias: Re-render current page buttons after click
+                  sequence:
+                  - delay:
+                      milliseconds: 300
+                  - *id012
+                  - repeat:
+                      for_each: "{{\n  buttons_pages.buttons\n  | selectattr(\"page\",
+                        \"defined\")\n  | selectattr(\"page\", \"eq\", nspanel_event.page)\n
+                        \ | selectattr(\"entity\", \"defined\")\n  | rejectattr(\"entity\",
+                        \"eq\", [])\n  | list\n}}\n"
+                      sequence: *id015
           - alias: Climate page
             conditions:
             - '{{ nspanel_event is defined }}'
             - '{{ nspanel_event.page is defined }}'
             - '{{ nspanel_event.page == pages.climate }}'
             sequence:
-            - *id015
+            - *id016
             - variables:
                 last_click_button: '{{ climate_custom_buttons | selectattr("component",
                   "defined") | selectattr("component", "eq", nspanel_event.component)
@@ -19367,14 +21191,14 @@ actions:
                     \ else\n    None\n}}\n"
                   name: '{{ last_click_button.name if last_click_button.name is defined
                     else None }}'
-            - *id016
+            - *id017
             - condition: '{{ entity_id_valid }}'
             - if: "{{\n  entity_domain in domains_functionality.detailed_only or\n
                 \ (entity_domain == \"cover\" and supported_features | bitwise_and(4)
                 > 0) or\n  (entity_domain == \"fan\" and (supported_features | bitwise_and(1)
                 > 0 or supported_features | bitwise_and(2) > 0)) or\n  (entity_domain
-                == \"light\" and (color_mode_brightness or color_mode_color or color_mode_temp))\n
-                \ (entity_domain == \"timer\")\n}}\n"
+                == \"light\" and (color_mode_brightness or color_mode_color or color_mode_temp))
+                or\n  (entity_domain == \"timer\")\n}}\n"
               then:
               - variables:
                   back_page: '{{ pages.home }}'
@@ -19386,7 +21210,7 @@ actions:
         conditions:
         - '{{ nspanel_event.type == "version"}}'
         sequence:
-        - &id017
+        - &id018
           variables:
             nspanel_deviceid: !input nspanel_name
             nspanel_full_name: "{{\n  device_name(nspanel_deviceid) ~ ((\" (\" ~ nspanel_name
@@ -19636,7 +21460,7 @@ actions:
             }}
         continue_on_error: true
       else:
-      - *id017
+      - *id018
       - action: persistent_notification.create
         data:
           notification_id: NSPanel_Easy_device_name_sensor_missing_{{ nspanel_name
@@ -19652,14 +21476,14 @@ actions:
             take more than a minute)\n\n  5. Go to [Developer Tools](/developer-tools/yaml)
             and click the button \"Automations\" to reload your automations\n"
         continue_on_error: true
-    - *id018
+    - *id019
     - choose:
       - conditions: '{{ pages.current == pages.home }}'
-        sequence: *id019
-      - conditions: '{{ pages.current in pages.buttonpages }}'
         sequence: *id020
-      - conditions: '{{ pages.current in pages.entitypages }}'
+      - conditions: '{{ pages.current in pages.buttonpages }}'
         sequence: *id021
+      - conditions: '{{ pages.current in pages.entitypages }}'
+        sequence: *id022
   - alias: Update button's entities
     conditions:
     - condition: trigger
@@ -19681,25 +21505,29 @@ actions:
         - '{{ pages.current == pages.alarm }}'
         - '{{ trigger.entity_id is match "alarm_control_panel." }}'
         - '{{ trigger.entity_id == detailed_entity_state }}'
-        sequence: *id022
+        sequence: *id023
       - alias: Button page
         conditions:
         - '{{ pages.current == pages.button }}'
         - '{{ trigger.entity_id.split(".") | count == 2 }}'
         - '{{ trigger.entity_id.split(".")[0] in ["button", "input_button"] }}'
         - '{{ trigger.entity_id == detailed_entity_state }}'
-        sequence: *id023
+        sequence: *id024
       - alias: Buttons pages
         conditions:
         - '{{ pages.current in pages.buttonpages }}'
         sequence:
         - *id012
         - repeat:
-            for_each: "{{\n  buttons_pages.buttons\n  | selectattr(\"page\", \"defined\")\n
-              \ | selectattr(\"page\", \"eq\", pages.current)\n  | selectattr(\"entity\",
-              \"defined\")\n  | selectattr(\"entity\", \"eq\", trigger.entity_id)\n
-              \ | list\n}}\n"
-            sequence: *id024
+            for_each: "{% set trigger_eid = trigger.entity_id %} {% set page_buttons
+              = buttons_pages.buttons\n  | selectattr(\"page\", \"defined\")\n  |
+              selectattr(\"page\", \"eq\", pages.current)\n  | selectattr(\"entity\",
+              \"defined\")\n  | rejectattr(\"entity\", \"eq\", [])\n  | rejectattr(\"entity\",
+              \"eq\", \"\")\n  | list %}\n{% set by_entity = page_buttons | selectattr(\"entity\",
+              \"eq\", trigger_eid) | list %} {% set by_state = page_buttons | selectattr(\"state_entity\",
+              \"defined\") | selectattr(\"state_entity\", \"eq\", trigger_eid) | list
+              %} {{ (by_entity + by_state) | unique | list }}\n"
+            sequence: *id015
       - alias: Climate page
         conditions:
         - '{{ pages.current == pages.climate }}'
@@ -19922,13 +21750,13 @@ actions:
         - '{{ trigger_entity_id.split(".") | count == 2 }}'
         - '{{ trigger_entity_id.split(".")[0] in ["button", "input_button"] }}'
         - '{{ trigger_entity_id == detailed_entity_state }}'
-        sequence: *id023
+        sequence: *id024
       - alias: Alarm page
         conditions:
         - '{{ pages.current == pages.alarm }}'
         - '{{ trigger_entity_id is match "alarm_control_panel." }}'
         - '{{ trigger_entity_id == detailed_entity_state }}'
-        sequence: *id022
+        sequence: *id023
   - alias: Update home page - Entities
     conditions:
     - condition: trigger

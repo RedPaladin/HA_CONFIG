@@ -76,8 +76,7 @@
       chip_font_size: '8'
       home_custom_button01: climate.nspanel_livingroom_thermostat
       home_custom_button02: media_player.cuisine
-      entity01: switch.shelly_plus_1_mini_ringdoor_ringdoor_mute
-      entity01_name: Mute doorbell
+      entity01: lock.front_door
       left_button_entity: script.cycle_cover_tilt_all_2nd_floor
       left_button_name: Tilt change
       indoortemp: sensor.nspanel_livingroom_temperature
@@ -90,15 +89,15 @@
       - 200
       - 204
       - 200
-      home_value04: sensor.current_power_production
+      home_value04: sensor.envoy_482329131221_current_power_production
       home_value04_icon: mdi:sun-angle-outline
       home_button06_icon: mdi:lightning-bolt
       entity_page01_label: Electricity
       entities_entity01: sensor.energy_production_today_2
       entities_entity02: sensor.energy_consumption_today
-      entities_entity04: sensor.current_power_production
+      entities_entity04: sensor.envoy_482329131221_current_power_production
       entities_entity04_icon: mdi:solar-power
-      entities_entity05: sensor.current_power_consumption
+      entities_entity05: sensor.envoy_482329131221_current_power_consumption
       entities_entity05_icon: mdi:home-lightning-bolt-outline
       entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
       entities_entity07_name: Current net power consumption
@@ -126,54 +125,12 @@
       home_custom_button07_icon: mdi:led-strip-variant
       right_button_entity: switch.hombli_smart_socket_socket_1
       chip03: binary_sensor.windows_right_living_room_contact
-- id: '1717232643461'
-  alias: Wash machine start end cycle detection
-  description: ''
-  use_blueprint:
-    path: Blackshome/appliance-notifications.yaml
-    input:
-      power_sensor: sensor.shelly_plus_pm_mini_reduit1_power
-      start_appliance_power: 20
-      start_time_delay: 3
-      end_appliance_power: 5
-      end_time_delay: 3
-      start_notify_device:
-      - 0bde52060cb2b97e7af7bf939f219956
-      end_notify_device:
-      - fa69e3ce77d50730395698f2456f7188
-      include_end_notify: enable_end_notify_options
-      include_power_tracking: disable_power_tracking
-      include_start_notify: disable_start_notify_options
-      include_time: time_disabled
-      after_time: 08:00:00
-      before_time: '22:00:00'
-      end_custom_actions:
-      - action: switch.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.shelly_plus_1_mini_reduit_force_fan
-      - action: switch.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.washing_machine_running
-      include_duration_tracking: enable_duration_tracking
-      global_conditions: []
-      include_custom_actions:
-      - enable_start_custom_actions
-      - enable_end_custom_actions
-      start_custom_actions:
-      - metadata: {}
-        data: {}
-        action: switch.turn_on
-        target:
-          entity_id: switch.shelly_plus_1_mini_reduit_force_fan
-      - action: switch.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.washing_machine_running
+      entities_entity08: sensor.envoy_482329131221_battery
+      entities_entity08_name: Battery charge
+      entities_entity05_name: Current power consumption
+      entities_entity04_name: Current power production
+      chip04_icon: ''
+      chip04_inverted: false
 - id: '1720092224522'
   alias: NSPanel Guest Room Blueprint
   description: ''
@@ -192,15 +149,14 @@
       home_custom_button01: climate.nspanel_guest_room_thermostat
       home_custom_button01_icon: ''
       home_indoor_temp_icon: ''
-      home_value04: sensor.current_power_production
-      home_value04_icon: mdi:sun-angle-outline
+      home_value04_icon: ''
       home_button06_icon: mdi:lightning-bolt
       entity_page01_label: Electricity
       entities_entity01: sensor.energy_production_today_2
       entities_entity02: sensor.energy_consumption_today
-      entities_entity04: sensor.current_power_production
+      entities_entity04: sensor.envoy_482329131221_current_power_production
       entities_entity04_icon: mdi:solar-power
-      entities_entity05: sensor.current_power_consumption
+      entities_entity05: sensor.envoy_482329131221_current_power_consumption
       entities_entity05_icon: mdi:home-lightning-bolt-outline
       entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
       entities_entity07_name: Current net power consumption
@@ -226,6 +182,11 @@
       home_custom_button05_name: Canopy Window
       home_custom_button05_icon: mdi:window-closed
       chip01: lock.front_door
+      entity01: lock.front_door
+      entities_entity08: sensor.envoy_482329131221_battery
+      entities_entity08_name: Battery charge
+      entities_entity05_name: Current power consumption
+      entities_entity04_name: Current power production
 - id: '1720449330389'
   alias: NSPanel Kids Room Blueprint
   description: ''
@@ -245,15 +206,15 @@
       left_button_entity: script.cycle_cover_tilt_kids_1st_floor
       left_button_name: Tilt change
       home_indoor_temp_icon: ''
-      home_value04: sensor.current_power_production
+      home_value04: sensor.envoy_482329131221_current_power_production
       home_value04_icon: mdi:sun-angle-outline
       home_button06_icon: mdi:lightning-bolt
       entity_page01_label: Electricity
       entities_entity01: sensor.energy_production_today_2
       entities_entity02: sensor.energy_consumption_today
-      entities_entity04: sensor.current_power_production
+      entities_entity04: sensor.envoy_482329131221_current_power_production
       entities_entity04_icon: mdi:solar-power
-      entities_entity05: sensor.current_power_consumption
+      entities_entity05: sensor.envoy_482329131221_current_power_consumption
       entities_entity05_icon: mdi:home-lightning-bolt-outline
       entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
       entities_entity07_name: Current net power consumption
@@ -279,6 +240,11 @@
       right_button_entity: script.play_random_rtttl_song_nspanel_kids_room
       right_button_name: Random song
       chip03: binary_sensor.windows_parents_room_contact
+      entity01: lock.front_door
+      entities_entity08: sensor.envoy_482329131221_battery
+      entities_entity08_name: Battery charge
+      entities_entity05_name: Current power consumption
+      entities_entity04_name: Current power production
 - id: '1720449359197'
   alias: NSPanel Parents Room Blueprint
   description: ''
@@ -296,8 +262,7 @@
       climate_chip_always_visible: false
       chip_font_size: '8'
       home_custom_button01: climate.nspanel_parents_room_thermostat
-      entity01: switch.shelly_plus_1_mini_ringdoor_ringdoor_mute
-      entity01_name: Mute doorbell
+      entity01: lock.front_door
       home_custom_button01_icon: ''
       home_custom_button03_icon: ''
       entity02: switch.shelly_plus_1_mini_reduit_keep_on
@@ -308,15 +273,15 @@
       - 200
       - 200
       - 200
-      home_value04: sensor.current_power_production
+      home_value04: sensor.envoy_482329131221_current_power_production
       home_value04_icon: mdi:sun-angle-outline
       home_button06_icon: mdi:lightning-bolt
       entity_page01_label: Electricity
       entities_entity01: sensor.energy_production_today_2
       entities_entity02: sensor.energy_consumption_today
-      entities_entity04: sensor.current_power_production
+      entities_entity04: sensor.envoy_482329131221_current_power_production
       entities_entity04_icon: mdi:solar-power
-      entities_entity05: sensor.current_power_consumption
+      entities_entity05: sensor.envoy_482329131221_current_power_consumption
       entities_entity05_icon: mdi:home-lightning-bolt-outline
       entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
       entities_entity07_name: Current net power consumption
@@ -344,6 +309,10 @@
       chip01: lock.front_door
       chip02: binary_sensor.windows_parents_room_contact
       chip03: binary_sensor.windows_kids_room_contact
+      entities_entity08: sensor.envoy_482329131221_battery
+      entities_entity08_name: Battery charge
+      entities_entity05_name: Current power consumption
+      entities_entity04_name: Current power production
 - id: '1721735374228'
   alias: Electricity tariff week days
   description: ''
@@ -413,22 +382,6 @@
     data:
       option: '{{ tariff }}'
   mode: single
-- id: '1723379932834'
-  alias: Play RTTTL song when wash machine cycle completed
-  description: Play music in living room when cycle completed
-  triggers:
-  - event_type: esphome.keep_on_off
-    trigger: event
-    event_data:
-      sender_id: shelly-plus-1-mini-reduit
-  conditions: []
-  actions:
-  - metadata: {}
-    data:
-      room_name: livingroom
-      song_id: 4686
-    action: script.play_random_rtttl_song_nspanel
-  mode: single
 - id: '1723740194817'
   alias: NSPanel TV Room Blueprint
   description: ''
@@ -454,15 +407,15 @@
       - 255
       - 255
       - 255
-      home_value04: sensor.current_power_production
+      home_value04: sensor.envoy_482329131221_current_power_production
       home_value04_icon: mdi:sun-angle-outline
       home_button06_icon: mdi:lightning-bolt
       entity_page01_label: Electricity
       entities_entity01: sensor.energy_production_today_2
       entities_entity02: sensor.energy_consumption_today
-      entities_entity04: sensor.current_power_production
+      entities_entity04: sensor.envoy_482329131221_current_power_production
       entities_entity04_icon: mdi:solar-power
-      entities_entity05: sensor.current_power_consumption
+      entities_entity05: sensor.envoy_482329131221_current_power_consumption
       entities_entity05_icon: mdi:home-lightning-bolt-outline
       entities_entity07: sensor.envoy_482329131221_current_net_power_consumption
       entities_entity07_name: Current net power consumption
@@ -474,22 +427,27 @@
       home_custom_button04: cover.my_evb_pro_io_2
       home_custom_button04_icon: mdi:blinds
       home_custom_button04_name: Chambre TV
-      home_custom_button06_icon: ''
+      home_custom_button06_icon: mdi:lamp
       home_custom_button05: alarm_control_panel.alarmo
       home_custom_button05_name: Home Alarm
       indoortemp: sensor.nspanel_tv_room_temperature
       home_value01: sensor.thermometer_tv_room_humidity
-      alarm: light.smart_bulb_tv_room
       home_custom_button07_icon: ''
       chip01: lock.front_door
       chip02: binary_sensor.shelly_plus_1_mini_spare_1_fan_running
       home_custom_button05_icon: mdi:shield-lock-outline
       chip01_icon: ''
       chip02_icon: ''
-      right_button_entity: light.shelly_plus_1pm_mini_tv_room_bracket_lamp
+      right_button_entity: light.switch_tv_bracket_lamp
       right_button_name: TV light
       home_custom_button02: media_player.piece_a_vivre
       chip03: binary_sensor.shelly_plus_1_mini_reduit_fan_running
+      entity01: lock.front_door
+      home_custom_button06: script.show_tv_room_bracket_lamp
+      entities_entity08: sensor.envoy_482329131221_battery
+      entities_entity08_name: Battery charge
+      entities_entity05_name: Current power consumption
+      entities_entity04_name: Current power production
 - id: '1733298456777'
   alias: "\U0001F385 XMas lights"
   description: Turn on and off the christmas lights depending of the time and day
@@ -965,4 +923,276 @@
     metadata: {}
     data:
       message: Action made by simulation
+  mode: single
+- id: '1783608173518'
+  alias: Switch TV Room Bracket Lamp
+  description: ''
+  triggers: []
+  conditions: []
+  actions:
+  - type: toggle
+    device_id: 09973de4105cdc7149894e355d4aa4fc
+    entity_id: f0e8b936c2373418215f8202593981c5
+    domain: light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 500
+  - condition: state
+    entity_id: light.smart_bulb_tv_room
+    state: 'on'
+  - action: esphome.nspanel_tv_room_wake_up
+    metadata: {}
+    data:
+      reset_timer: false
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 500
+  - action: esphome.nspanel_tv_room_entity_details_show
+    metadata: {}
+    data:
+      back_page: home
+      entity: light.switch_tv_bracket_lamp
+  mode: single
+- id: '1784882263457'
+  alias: NSPanel - Update Moon Icon
+  triggers:
+  - entity_id: sensor.moon_phase
+    trigger: state
+  actions:
+  - repeat:
+      for_each: '{{ panels }}'
+      sequence:
+      - action: esphome.nspanel_{{ repeat.item }}_icon
+        data:
+          page: chips
+          id: chip04
+          icon: '{{ moon_icons.get(states(''sensor.moon_phase''), '''') }}'
+          icon_color:
+          - 255
+          - 255
+          - 255
+          visible: true
+  mode: single
+  variables:
+    panels:
+    - livingroom
+    - tv_room
+    - guest_room
+    - kids_room
+    - parents_room
+    moon_icons:
+      new_moon: 
+      waxing_crescent: 
+      first_quarter: 
+      waxing_gibbous: 
+      full_moon: 
+      waning_gibbous: 
+      last_quarter: 
+      waning_crescent: 
+- id: '1787669434309'
+  alias: NSPanel Guest Room - Solar/Battery Display
+  description: Display solar production if > 0W, otherwise display battery level
+  triggers:
+  - trigger: state
+    entity_id: sensor.envoy_482329131221_current_power_production
+  - trigger: state
+    entity_id: sensor.envoy_482329131221_battery
+  actions:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.envoy_482329131221_current_power_production
+        above: 0
+      sequence:
+      - data:
+          page: home
+          id: value04
+          txt_list:
+          - '{{ (states(''sensor.envoy_482329131221_current_power_production'') |
+            float(0) | round(3)) | string + ''kW'' }}'
+        action: esphome.nspanel_guest_room_component_text_list
+      - data:
+          page: home
+          id: value04_icon
+          icon: 8
+          icon_color:
+          - 255
+          - 192
+          - 0
+          visible: true
+        action: esphome.nspanel_guest_room_icon
+    default:
+    - data:
+        page: home
+        id: value04
+        txt_list:
+        - '{{ (states(''sensor.envoy_482329131221_battery'') | float(0) | round(0))
+          | string + ''%'' }}'
+      action: esphome.nspanel_guest_room_component_text_list
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            > 95 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 0
+            - 255
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 90 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 0
+            - 255
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 80 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 50
+            - 255
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 70 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 100
+            - 255
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 60 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 150
+            - 255
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 50 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 200
+            - 255
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 40 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 255
+            - 200
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 30 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 255
+            - 150
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 20 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 255
+            - 100
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      - conditions:
+        - condition: template
+          value_template: '{{ states(''sensor.envoy_482329131221_battery'') | float(0)
+            >= 10 }}'
+        sequence:
+        - data:
+            page: home
+            id: value04_icon
+            icon: 
+            icon_color:
+            - 255
+            - 50
+            - 0
+            visible: true
+          action: esphome.nspanel_guest_room_icon
+      default:
+      - data:
+          page: home
+          id: value04_icon
+          icon: 
+          icon_color:
+          - 255
+          - 0
+          - 0
+          visible: true
+        action: esphome.nspanel_guest_room_icon
   mode: single

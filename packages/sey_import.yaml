@@ -118,7 +118,7 @@ automation:
     description: ""
     trigger:
       - platform: time
-        at: "03:30:00"
+        at: "05:15:00"
     condition: []
     action:
       - service: script.import_sey_data

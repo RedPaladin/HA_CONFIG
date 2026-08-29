@@ -7,6 +7,17 @@ homeassistant:
     local: /media
     www: /config/www
 
+  customize:
+    # BATTERY energy tracking
+    sensor.energy_charged_into_the_battery:
+      icon: mdi:battery-positive
+      device_class: energy
+      state_class: total
+    sensor.energy_discharged_from_the_battery:
+      icon: mdi:battery-negative
+      device_class: energy
+      state_class: total
+
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
@@ -27,7 +38,7 @@ modbus: # https://www.home-assistant.io/integrations/modbus/
     port: 502
     name: "modbus_pac"
     delay: 1 # time to delay sending messages in seconds after connecting
-    message_wait_milliseconds: 200
+    message_wait_milliseconds: 100
     timeout: 10
     sensors:
       - name: "PAC External Temperature"
@@ -58,6 +69,338 @@ modbus: # https://www.home-assistant.io/integrations/modbus/
         address: 1021
         input_type: holding
         data_type: int16
+
+      # PAC registers 1001-1114
+      - name: "PAC address 1001"
+        address: 1001
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1003"
+        address: 1003
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1004"
+        address: 1004
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1005"
+        address: 1005
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1006"
+        address: 1006
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1007"
+        address: 1007
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1015"
+        address: 1015
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1016"
+        address: 1016
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1017"
+        address: 1017
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1021"
+        address: 1021
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1023"
+        address: 1023
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1028"
+        address: 1028
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1029"
+        address: 1029
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1100"
+        address: 1100
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1101"
+        address: 1101
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1102"
+        address: 1102
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 1111"
+        address: 1111
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+
+      # PAC register 6001-6039
+      - name: "PAC address 6001"
+        address: 6001
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6002"
+        address: 6002
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6003"
+        address: 6003
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6004"
+        address: 6004
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6005"
+        address: 6005
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6008"
+        address: 6008
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6009"
+        address: 6009
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6010"
+        address: 6010
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6011"
+        address: 6011
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6012"
+        address: 6012
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6013"
+        address: 6013
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6014"
+        address: 6014
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6015"
+        address: 6015
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6016"
+        address: 6016
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6017"
+        address: 6017
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+      - name: "PAC address 6018"
+        address: 6018
+        input_type: holding
+        data_type: int16
+        state_class: measurement
+
+      # PAC registers 2000-2039
+      # /!\ Not interesting registers. These look like mode or settings are are always constant...
+      # - name: "PAC address 2000"
+      #   address: 2000
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2001"
+      #   address: 2001
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2002"
+      #   address: 2002
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2003"
+      #   address: 2003
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2004"
+      #   address: 2004
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2005"
+      #   address: 2005
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2006"
+      #   address: 2006
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2007"
+      #   address: 2007
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2008"
+      #   address: 2008
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2009"
+      #   address: 2009
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2010"
+      #   address: 2010
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2011"
+      #   address: 2011
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2012"
+      #   address: 2012
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2013"
+      #   address: 2013
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2014"
+      #   address: 2014
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2015"
+      #   address: 2015
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2016"
+      #   address: 2016
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2017"
+      #   address: 2017
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2018"
+      #   address: 2018
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2019"
+      #   address: 2019
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2020"
+      #   address: 2020
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2021"
+      #   address: 2021
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2022"
+      #   address: 2022
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2023"
+      #   address: 2023
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2024"
+      #   address: 2024
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2025"
+      #   address: 2025
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2026"
+      #   address: 2026
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2027"
+      #   address: 2027
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2028"
+      #   address: 2028
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2029"
+      #   address: 2029
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2030"
+      #   address: 2030
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2031"
+      #   address: 2031
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2032"
+      #   address: 2032
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2033"
+      #   address: 2033
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2034"
+      #   address: 2034
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2035"
+      #   address: 2035
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2036"
+      #   address: 2036
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2037"
+      #   address: 2037
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2038"
+      #   address: 2038
+      #   input_type: holding
+      #   data_type: int16
+      # - name: "PAC address 2039"
+      #   address: 2039
+      #   input_type: holding
+      #   data_type: int16
 
 zeroconf:
 
@@ -148,16 +491,21 @@ import_statistics:
 #### Electricity tracking
 
 sensor:
-  - platform: derivative
-    name: Current power production
-    source: sensor.envoy_482329131221_lifetime_energy_production
-    unit: kW
-    unit_prefix: m # / (1e-3) because original unit is in MWh
-  - platform: derivative
-    name: Current power consumption
-    source: sensor.envoy_482329131221_lifetime_energy_consumption
-    unit: kW
-    unit_prefix: m # / (1e-3) because original unit is in MWh
+  # BATTERY energy tracking
+  - platform: integration
+    name: Energy charged into the battery
+    source: sensor.charge_battery_power
+    unit_prefix: k
+    unit_time: h
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    name: Energy discharged from the battery
+    source: sensor.discharge_battery_power
+    unit_prefix: k
+    unit_time: h
+    max_sub_interval:
+      minutes: 5
 
 #### Electricity tracking
 
@@ -194,6 +542,45 @@ utility_meter:
       - none
 
 template:
+  - binary_sensor:
+      - name: "PAC State 0"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(1) > 0 }}
+      - name: "PAC State 1"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(2) > 0 }}
+      - name: "PAC State 2"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(4) > 0 }}
+      - name: "PAC State 3"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(8) > 0 }}
+      - name: "PAC State 4"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(16) > 0 }}
+      - name: "PAC State 5"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(32) > 0 }}
+      - name: "PAC State 6"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(64) > 0 }}
+      - name: "PAC State 7"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(128) > 0 }}
+      - name: "PAC State 8"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(256) > 0 }}
+      - name: "PAC State 9"
+        state: >
+          {{ states('sensor.pac_state') | int | bitwise_and(512) > 0 }}
+      - name: "PAC Address 1023 derivative positive"
+        state: >
+          {{ states('sensor.pac_address_1023_derivative') | float(0) > 0 }}
+        delay_on:
+          minutes: 2
+        delay_off:
+          minutes: 2
+
   # Test SEY with templated sensor (01-09-2025)
   - sensor:
       - name: "Total Water Consumption Test"
@@ -289,6 +676,28 @@ template:
         state: "{{ (states('sensor.cost_energy_grid_consumption') | float + states('sensor.cost_energy_returned_to_grid') | float) | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
+
+  - sensor:
+      - name: "Discharge Battery Power"
+        state: >
+          {% set power =
+            states('sensor.encharge_492529008312_power') | int(0) +
+            states('sensor.encharge_492529008322_power') | int(0)
+          %}
+          {{ 0 if power < 0 else power | abs }}
+        unit_of_measurement: "W"
+        icon: mdi:battery-charging
+        state_class: measurement
+      - name: "Charge Battery Power"
+        state: >
+          {% set power =
+            states('sensor.encharge_492529008312_power') | int(0) +
+            states('sensor.encharge_492529008322_power') | int(0)
+          %}
+          {{ 0 if power > 0 else power | abs }}
+        unit_of_measurement: "W"
+        icon: mdi:battery-charging
+        state_class: measurement
 
   #### Tracking time TV watching
   - sensor:

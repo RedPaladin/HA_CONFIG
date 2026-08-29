@@ -13,6 +13,7 @@ __pycache__/
 secrets.yaml
 known_hosts
 www/camera_snapshot.jpg
+www/camera_door_open.jpg
 home-assistant.log.fault
 zigbee.db
 .cloud/

@@ -42,14 +42,15 @@ automation:
         webhook_id: "-fZIUqAtoQwg1QA4MD5kFYdWo"
     variables:
       users: !include .allowed_users.yaml
-      fingerprint_id: "{{ trigger.json.alarm.triggers[0].value }}"
-      username: "{{ users.get(fingerprint_id) }}"
+      unique_id: "{{ trigger.json.alarm.triggers[0].value }}"
+      username: "{{ users.get(unique_id) }}"
       is_locked: "{{ is_state('lock.front_door', 'locked') }}"
     condition:
       - condition: template
         value_template: >
           {{
-            trigger.json.alarm.triggers[0].key == 'fingerprint_registered'
+            (trigger.json.alarm.triggers[0].key == 'fingerprint_registered'
+            or trigger.json.alarm.triggers[0].key == 'nfc_registered')
             and username is not none
           }}
     action:
@@ -58,6 +59,12 @@ automation:
               - condition: template
                 value_template: "{{ is_locked }}"
             sequence:
+              - action: camera.snapshot
+                data:
+                  filename: /config/www/camera_door_open.jpg
+                target:
+                  entity_id:
+                  - camera.g4_doorbell_pro_poe_high_resolution_channel
               - service: lock.unlock
                 target:
                   entity_id: lock.front_door
@@ -68,6 +75,13 @@ automation:
               - service: lock.lock
                 target:
                   entity_id: lock.front_door
+      - wait_template: >
+          {{
+            (is_locked and is_state('lock.front_door', 'unlocked'))
+            or (not is_locked and is_state('lock.front_door', 'locked'))
+          }}
+        timeout: '00:00:05'
+        continue_on_timeout: false
       - service: logbook.log
         data:
           entity_id: lock.front_door
@@ -77,4 +91,16 @@ automation:
               {{ username }} has opened the door
             {% else %}
               {{ username }} has closed the door
+            {% endif %}
+      - service: tts.speak
+        target:
+          entity_id: tts.openai_tts
+        data:
+          media_player_entity_id: media_player.g4_doorbell_pro_poe_speaker
+          cache: true
+          message: >
+            {% if is_locked %}
+              La porte a été ouverte
+            {% else %}
+              La porte a été fermée
             {% endif %}

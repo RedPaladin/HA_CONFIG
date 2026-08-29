@@ -135,3 +135,12 @@ play_simpson_espanel_tv_room:
   mode: single
   icon: mdi:music
   description: ''
+show_tv_room_bracket_lamp:
+  sequence:
+  - action: esphome.nspanel_tv_room_entity_details_show
+    metadata: {}
+    data:
+      back_page: home
+      entity: light.switch_tv_bracket_lamp
+  alias: Show TV Room Bracket Lamp
+  description: ''

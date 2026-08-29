@@ -33,8 +33,15 @@ import voluptuous as vol
 
 from .analytics.analytics import ANALYTICS_INTERVAL, Analytics
 from .common import validate_name_pattern
-from .configuration.global_config import FLAG_HAS_GLOBAL_GUI_CONFIG, get_global_configuration, get_global_gui_configuration
+from .configuration.global_config import (
+    FLAG_HAS_GLOBAL_GUI_CONFIG,
+    get_global_configuration,
+)
+from .configuration.sensor_config import SENSOR_CONFIG
 from .const import (
+    CONF_COST_SENSOR_FRIENDLY_NAMING,
+    CONF_COST_SENSOR_NAMING,
+    CONF_CREATE_COST_SENSORS,
     CONF_CREATE_DOMAIN_GROUPS,
     CONF_CREATE_ENERGY_SENSORS,
     CONF_CREATE_STANDBY_GROUP,
@@ -47,6 +54,10 @@ from .const import (
     CONF_ENABLE_ANALYTICS,
     CONF_ENABLE_AUTODISCOVERY_DEPRECATED,
     CONF_ENERGY_INTEGRATION_METHOD,
+    CONF_ENERGY_PRICE,
+    CONF_ENERGY_PRICE_MULTIPLIER,
+    CONF_ENERGY_PRICE_SENSOR,
+    CONF_ENERGY_PRICE_SURCHARGE,
     CONF_ENERGY_SENSOR_CATEGORY,
     CONF_ENERGY_SENSOR_FRIENDLY_NAMING,
     CONF_ENERGY_SENSOR_NAMING,
@@ -95,10 +106,9 @@ from .const import (
     SensorType,
     UnitPrefix,
 )
-from .discovery import DiscoveryManager, DiscoveryStatus
+from .discovery import DiscoveryManager, DiscoveryStatus, get_discovery_manager
 from .migrate import async_fix_legacy_profile_config_entry, async_migrate_config_entry
 from .power_profile.power_profile import DeviceType
-from .sensor import SENSOR_CONFIG
 from .sensors.group.config_entry_utils import (
     get_entries_excluding_global_config,
     get_entries_having_subgroup,
@@ -118,6 +128,7 @@ DISCOVERY_SCHEMA = vol.Schema(
         vol.Optional(CONF_EXCLUDE_SELF_USAGE): cv.boolean,
     },
 )
+
 CONFIG_SCHEMA = vol.Schema(
     {
         vol.Optional(DOMAIN, default=dict): vol.All(
@@ -153,6 +164,13 @@ CONFIG_SCHEMA = vol.Schema(
                     vol.Optional(CONF_ENABLE_AUTODISCOVERY_DEPRECATED): cv.boolean,
                     vol.Optional(CONF_DISCOVERY_EXCLUDE_SELF_USAGE_DEPRECATED): cv.boolean,
                     vol.Optional(CONF_CREATE_ENERGY_SENSORS): cv.boolean,
+                    vol.Optional(CONF_CREATE_COST_SENSORS): cv.boolean,
+                    vol.Optional(CONF_ENERGY_PRICE): vol.Coerce(float),
+                    vol.Optional(CONF_ENERGY_PRICE_SENSOR): cv.entity_id,
+                    vol.Optional(CONF_ENERGY_PRICE_SURCHARGE): vol.Coerce(float),
+                    vol.Optional(CONF_ENERGY_PRICE_MULTIPLIER): vol.Coerce(float),
+                    vol.Optional(CONF_COST_SENSOR_NAMING): validate_name_pattern,
+                    vol.Optional(CONF_COST_SENSOR_FRIENDLY_NAMING): validate_name_pattern,
                     vol.Optional(CONF_CREATE_UTILITY_METERS): cv.boolean,
                     vol.Optional(CONF_UTILITY_METER_TARIFFS): vol.All(cv.ensure_list, [cv.string]),
                     vol.Optional(CONF_UTILITY_METER_TYPES): vol.All(cv.ensure_list, [vol.In(METER_TYPES)]),
@@ -190,7 +208,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _LOGGER.critical(msg)
         return False
 
-    global_config = await get_global_configuration(hass, config)
+    global_config = get_global_configuration(hass, config)
 
     discovery_manager = await create_discovery_manager_instance(hass, config, global_config)
     hass.data[DOMAIN] = {
@@ -205,7 +223,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         DATA_ANALYTICS: {},
     }
 
-    await register_services(hass)
+    register_services(hass)
 
     await async_load_platform(hass, Platform.SELECT, DOMAIN, {}, config)
     await setup_yaml_sensors(hass, config, global_config)
@@ -258,7 +276,9 @@ async def create_discovery_manager_instance(
     global_powercalc_config: ConfigType,
 ) -> DiscoveryManager:
     discovery_config = global_powercalc_config.get(CONF_DISCOVERY, {})
-    exclude_device_types = [DeviceType(device_type) for device_type in discovery_config.get(CONF_EXCLUDE_DEVICE_TYPES, [])]
+    exclude_device_types = [
+        DeviceType(device_type) for device_type in discovery_config.get(CONF_EXCLUDE_DEVICE_TYPES, [])
+    ]
     exclude_self_usage = discovery_config.get(CONF_EXCLUDE_SELF_USAGE, False)
     enable_autodiscovery = discovery_config.get(CONF_ENABLED, True)
 
@@ -273,7 +293,7 @@ async def create_discovery_manager_instance(
     return manager
 
 
-async def register_services(hass: HomeAssistant) -> None:
+def register_services(hass: HomeAssistant) -> None:
     """Register generic services"""
 
     async def _handle_change_gui_service(call: ServiceCall) -> None:
@@ -288,7 +308,7 @@ async def register_services(hass: HomeAssistant) -> None:
 
     async def _handle_update_library_service(_: ServiceCall) -> None:
         _LOGGER.info("Updating library and rediscovering devices")
-        discovery_manager: DiscoveryManager = hass.data[DOMAIN][DATA_DISCOVERY_MANAGER]
+        discovery_manager = get_discovery_manager(hass)
         await discovery_manager.update_library_and_rediscover()
 
     hass.services.async_register(
@@ -309,26 +329,20 @@ async def register_services(hass: HomeAssistant) -> None:
         hass.data[DOMAIN][DATA_USED_UNIQUE_IDS] = []
         hass.data[DOMAIN][DATA_CONFIGURED_ENTITIES] = {}
         hass.data[DOMAIN][DATA_ANALYTICS] = {}
-        hass.data[DOMAIN][DOMAIN_CONFIG] = await get_global_configuration(hass, reload_config)
+        hass.data[DOMAIN][DOMAIN_CONFIG] = get_global_configuration(hass, reload_config)
 
         # Reload YAML sensors if any
         if DOMAIN in reload_config:
             for sensor_config in reload_config[DOMAIN].get(CONF_SENSORS, []):
                 sensor_config.update({DISCOVERY_TYPE: PowercalcDiscoveryType.USER_YAML})
-                await async_load_platform(
-                    hass,
-                    Platform.SENSOR,
-                    DOMAIN,
-                    sensor_config,
-                    reload_config,
-                )
+                await _async_load_yaml_sensor(hass, sensor_config, reload_config)
 
         # Reload all config entries
         for entry in hass.config_entries.async_entries(DOMAIN):
             _LOGGER.debug("Reloading config entry %s", entry.entry_id)
             await hass.config_entries.async_reload(entry.entry_id)
 
-        global_config = await get_global_configuration(hass, reload_config)
+        global_config = get_global_configuration(hass, reload_config)
         setup_domain_groups(hass, global_config)
         await create_standby_group(hass, global_config)
 
@@ -406,15 +420,7 @@ async def setup_yaml_sensors(
         """Load secondary sensors after primary sensors."""
         await asyncio.gather(
             *(
-                hass.async_create_task(
-                    async_load_platform(
-                        hass,
-                        Platform.SENSOR,
-                        DOMAIN,
-                        sensor_config,
-                        config,
-                    ),
-                )
+                hass.async_create_task(_async_load_yaml_sensor(hass, sensor_config, config))
                 for sensor_config in secondary_sensors
             ),
         )
@@ -423,18 +429,14 @@ async def setup_yaml_sensors(
 
     await asyncio.gather(
         *(
-            hass.async_create_task(
-                async_load_platform(
-                    hass,
-                    Platform.SENSOR,
-                    DOMAIN,
-                    sensor_config,
-                    config,
-                ),
-            )
+            hass.async_create_task(_async_load_yaml_sensor(hass, sensor_config, config))
             for sensor_config in primary_sensors
         ),
     )
+
+
+async def _async_load_yaml_sensor(hass: HomeAssistant, sensor_config: ConfigType, config: ConfigType) -> None:
+    await async_load_platform(hass, Platform.SENSOR, DOMAIN, sensor_config, config)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -442,7 +444,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await async_fix_legacy_profile_config_entry(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, [Platform.SENSOR, Platform.SELECT])
-    # await hass.config_entries.async_forward_entry_setups(entry, [Platform.SENSOR])
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
 
@@ -452,10 +453,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if entry.unique_id == ENTRY_GLOBAL_CONFIG_UNIQUE_ID:
         global_config = hass.data[DOMAIN][DOMAIN_CONFIG]
         if global_config.get(FLAG_HAS_GLOBAL_GUI_CONFIG, False) is False:
-            await apply_global_gui_configuration_changes(hass, entry)
+            await apply_global_gui_configuration_changes(hass)
 
         discovery_enabled = bool(entry.data.get(CONF_DISCOVERY, {}).get(CONF_ENABLED, False))
-        discovery_manager: DiscoveryManager = hass.data[DOMAIN][DATA_DISCOVERY_MANAGER]
+        discovery_manager = get_discovery_manager(hass)
         if discovery_enabled and discovery_manager.status == DiscoveryStatus.DISABLED:
             _LOGGER.debug("Enabling discovery manager based on global configuration")
             discovery_manager.enable()
@@ -471,7 +472,7 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Update a given config entry."""
 
     if entry.unique_id == ENTRY_GLOBAL_CONFIG_UNIQUE_ID:
-        await apply_global_gui_configuration_changes(hass, entry)
+        await apply_global_gui_configuration_changes(hass)
 
     await hass.config_entries.async_reload(entry.entry_id)
 
@@ -480,10 +481,11 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
         await hass.config_entries.async_reload(related_entry.entry_id)
 
 
-async def apply_global_gui_configuration_changes(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def apply_global_gui_configuration_changes(hass: HomeAssistant) -> None:
     """Apply global configuration changes to all entities."""
     global_config = hass.data[DOMAIN][DOMAIN_CONFIG]
-    global_config.update(get_global_gui_configuration(entry))
+    global_config.clear()
+    global_config.update(get_global_configuration(hass, {}))
     for entry in get_entries_excluding_global_config(hass):
         if entry.state != ConfigEntryState.LOADED:  # pragma: no cover
             continue
@@ -510,14 +512,14 @@ async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> 
 
 async def async_remove_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Called after a config entry is removed."""
-    discovery_manager: DiscoveryManager = hass.data[DOMAIN][DATA_DISCOVERY_MANAGER]
+    discovery_manager = get_discovery_manager(hass)
     discovery_manager.remove_initialized_flow(config_entry)
 
     updated_entries: list[ConfigEntry] = []
 
     sensor_type = config_entry.data.get(CONF_SENSOR_TYPE)
     if sensor_type == SensorType.VIRTUAL_POWER:
-        updated_entries = await remove_power_sensor_from_associated_groups(
+        updated_entries = remove_power_sensor_from_associated_groups(
             hass,
             config_entry,
         )
@@ -545,7 +547,7 @@ async def repair_none_config_entries_issue(hass: HomeAssistant) -> None:
         try:
             unique_id = f"{int(time.time() * 1000)}_{random.randint(1000, 9999)}"  # noqa: S311
             object.__setattr__(entry, "unique_id", unique_id)
-            hass.config_entries._entries._index_entry(entry)  # noqa
+            hass.config_entries._entries._index_entry(entry)  # noqa: SLF001
             await hass.config_entries.async_remove(entry.entry_id)
         except Exception as e:  # pragma: no cover
             _LOGGER.error("problem while cleaning up None entities", exc_info=e)  # pragma: no cover

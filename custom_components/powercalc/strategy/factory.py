@@ -171,11 +171,13 @@ class PowerCalculatorStrategyFactory:
             else:
                 raise StrategyConfigurationError("No composite configuration supplied")
 
-        sub_strategies = composite_config
+        sub_strategies: list[ConfigType]
         mode = DEFAULT_MODE
         if isinstance(composite_config, dict):
             mode = composite_config.get(CONF_MODE, DEFAULT_MODE)
-            sub_strategies = composite_config.get(CONF_STRATEGIES)  # type: ignore
+            sub_strategies = composite_config.get(CONF_STRATEGIES, [])
+        else:
+            sub_strategies = composite_config
 
         async def _create_sub_strategy(strategy_config: ConfigType) -> SubStrategy:
             condition_instance = None
@@ -200,6 +202,8 @@ class PowerCalculatorStrategyFactory:
             )
             return SubStrategy(condition_config, condition_instance, strategy_instance)  # type: ignore
 
+        if not sub_strategies:
+            raise StrategyConfigurationError("No strategies configured for composite strategy")
         strategies = [await _create_sub_strategy(config) for config in sub_strategies]
         return CompositeStrategy(self._hass, strategies, mode)
 
@@ -207,7 +211,8 @@ class PowerCalculatorStrategyFactory:
         """Create instance of multi switch strategy."""
         multi_switch_config: ConfigType = {}
         if power_profile and power_profile.multi_switch_config:
-            multi_switch_config = power_profile.multi_switch_config
+            # Copy to avoid mutating the (potentially cached) profile config with the user's config below.
+            multi_switch_config = dict(power_profile.multi_switch_config)
         multi_switch_config.update(config.get(CONF_MULTI_SWITCH, {}))
 
         if not multi_switch_config:
