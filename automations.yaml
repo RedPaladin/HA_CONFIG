@@ -64,7 +64,7 @@
   use_blueprint:
     path: Blackymas/nspanel_easy_blueprint.yaml
     input:
-      nspanel_name: 4e40f3e1ab7ea06b0496e4d004180601
+      nspanel_name: fab13af401931a8722032967cf9574eb
       weather_entity: weather.weather_at_1400
       outdoortemp: sensor.i_regul_heatpump_external_temperature
       timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
@@ -137,7 +137,7 @@
   use_blueprint:
     path: Blackymas/nspanel_easy_blueprint.yaml
     input:
-      nspanel_name: da30966e71f658436421e893c31b87e0
+      nspanel_name: 5a98475834edd7cf39eeb8979935ad4b
       weather_entity: weather.weather_at_1400
       outdoortemp: sensor.i_regul_heatpump_external_temperature
       timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
@@ -193,7 +193,7 @@
   use_blueprint:
     path: Blackymas/nspanel_easy_blueprint.yaml
     input:
-      nspanel_name: 52da761f9f029248aace1bbe2535775a
+      nspanel_name: aa7429738631f9effc0976beff57bb7e
       weather_entity: weather.weather_at_1400
       outdoortemp: sensor.i_regul_heatpump_external_temperature
       timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
@@ -251,7 +251,7 @@
   use_blueprint:
     path: Blackymas/nspanel_easy_blueprint.yaml
     input:
-      nspanel_name: 2e99f3f030166b30c382ec889a8c46fc
+      nspanel_name: f9b0ca5fade740e79b9dda7f2ca80ac6
       weather_entity: weather.weather_at_1400
       outdoortemp: sensor.i_regul_heatpump_external_temperature
       timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)
@@ -388,7 +388,7 @@
   use_blueprint:
     path: Blackymas/nspanel_easy_blueprint.yaml
     input:
-      nspanel_name: 2de2099c873b48ffbe6dbf2b995378b5
+      nspanel_name: 09a366146b2361c47079382d78800bca
       weather_entity: weather.weather_at_1400
       outdoortemp: sensor.i_regul_heatpump_external_temperature
       timezone: Europe/Zurich (CET-1CEST,M3.5.0,M10.5.0/3)

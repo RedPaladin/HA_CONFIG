@@ -1,0 +1,125 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Verbinden met je MySQL-database",
+                "description": "Voer de verbindingsgegevens in. Let op: een rijlimiet boven de 1000 instellen is op eigen risico en kan de prestaties beïnvloeden.",
+                "data": {
+                    "mysql_host": "Host",
+                    "mysql_port": "Poort",
+                    "mysql_username": "Gebruikersnaam",
+                    "mysql_password": "Wachtwoord",
+                    "mysql_db": "Database",
+                    "mysql_timeout": "Verbindingstime-out (seconden)",
+                    "mysql_charset": "Tekenset",
+                    "mysql_collation": "Collatie",
+                    "mysql_autocommit": "Autocommit",
+                    "mysql_row_limit": "Rijlimiet (veiligheidsgrens)",
+                    "mysql_use_tls": "Verbinding versleutelen (TLS)",
+                    "mysql_readonly": "Alleen-lezen verbinding"
+                },
+                "data_description": {
+                    "mysql_use_tls": "Versleutelt het verkeer naar de database. De server moet TLS geconfigureerd hebben; zonder TLS mislukt de verbinding. Het servercertificaat wordt niet gecontroleerd, dus dit beschermt tegen meelezen op het netwerk, niet tegen een server die zich voordoet als de jouwe. Standaard uit, zodat bestaande installaties blijven werken.",
+                    "mysql_readonly": "Weigert de Uitvoeren-actie op deze verbinding, wat het statement ook zegt. Gebruik dit voor een verbinding die alleen dashboards of rapportages voedt, zodat een schrijfactie die op de verkeerde verbinding terechtkomt hier niet landt. Standaard uit."
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Verbinden met de server is mislukt. Controleer de host, de poort en je firewall. Details: {error}",
+            "invalid_auth": "De server weigerde de gebruikersnaam of het wachtwoord.",
+            "unknown_database": "De database bestaat niet, of deze gebruiker heeft er geen toegang toe.",
+            "unknown": "Onverwachte fout bij het verbinden: {error}",
+            "tls_unavailable": "De server accepteerde de verbinding maar versleutelde die niet. Configureer TLS op de database, of zet de versleutelingsoptie uit."
+        },
+        "abort": {
+            "already_configured": "Deze verbinding is al geconfigureerd.",
+            "cannot_connect": "Verbinden tijdens het importeren is mislukt."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Instellingen",
+                "data": {
+                    "mysql_host": "Host",
+                    "mysql_port": "Poort",
+                    "mysql_username": "Gebruikersnaam",
+                    "mysql_password": "Wachtwoord",
+                    "mysql_db": "Database",
+                    "mysql_timeout": "Verbindingstime-out (seconden)",
+                    "mysql_charset": "Tekenset",
+                    "mysql_collation": "Collatie",
+                    "mysql_autocommit": "Autocommit",
+                    "mysql_row_limit": "Rijlimiet (veiligheidsgrens)",
+                    "mysql_use_tls": "Verbinding versleutelen (TLS)",
+                    "mysql_readonly": "Alleen-lezen verbinding"
+                },
+                "data_description": {
+                    "mysql_use_tls": "Versleutelt het verkeer naar de database. De server moet TLS geconfigureerd hebben; zonder TLS mislukt de verbinding. Het servercertificaat wordt niet gecontroleerd, dus dit beschermt tegen meelezen op het netwerk, niet tegen een server die zich voordoet als de jouwe. Standaard uit, zodat bestaande installaties blijven werken.",
+                    "mysql_readonly": "Weigert de Uitvoeren-actie op deze verbinding, wat het statement ook zegt. Gebruik dit voor een verbinding die alleen dashboards of rapportages voedt, zodat een schrijfactie die op de verkeerde verbinding terechtkomt hier niet landt. Standaard uit."
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Verbinden met de server is mislukt. Controleer de host, de poort en je firewall. Details: {error}",
+            "invalid_auth": "De server weigerde de gebruikersnaam of het wachtwoord.",
+            "unknown_database": "De database bestaat niet, of deze gebruiker heeft er geen toegang toe.",
+            "unknown": "Onverwachte fout bij het verbinden: {error}",
+            "tls_unavailable": "De server accepteerde de verbinding maar versleutelde die niet. Configureer TLS op de database, of zet de versleutelingsoptie uit."
+        }
+    },
+    "services": {
+        "execute": {
+            "name": "Uitvoeren",
+            "description": "Voert een statement uit dat iets wijzigt (INSERT, UPDATE, DELETE, DDL, en onderhoudsstatements zoals ANALYZE of OPTIMIZE) en geeft terug wat het geraakt heeft. Weigert een statement dat alleen leest; gebruik daarvoor Query.",
+            "fields": {
+                "query": {
+                    "name": "Query",
+                    "description": "De SQL-query die uitgevoerd moet worden."
+                },
+                "values": {
+                    "name": "Waarden",
+                    "description": "Optionele lijst met waarden voor de %s-plaatshouders in de query, in de volgorde waarin de plaatshouders voorkomen. Templates behouden hun eigen datatype."
+                },
+                "db4query": {
+                    "name": "Database voor query",
+                    "description": "Overschrijf optioneel de databasenaam voor deze specifieke query."
+                },
+                "config_entry": {
+                    "name": "Verbinding",
+                    "description": "De databaseverbinding waarop deze query wordt uitgevoerd. Laat leeg om de standaardinstantie te gebruiken."
+                },
+                "raise_on_error": {
+                    "name": "Fout opwerpen",
+                    "description": "Stop de aanroeper met een fout als het statement mislukt, in plaats van dit in de response te melden als succeeded false. Standaard uit bij deze actie; zet het aan voor het gedrag van Query."
+                }
+            }
+        },
+        "query": {
+            "name": "Query",
+            "description": "Voert een statement uit dat alleen leest - SELECT, WITH, SHOW, DESCRIBE, EXPLAIN en dergelijke - en geeft de rijen terug samen met de metadata over het resultaat. Weigert alles wat gegevens of schema wijzigt; gebruik daarvoor Uitvoeren.",
+            "fields": {
+                "query": {
+                    "name": "Query",
+                    "description": "De SQL-query die uitgevoerd moet worden."
+                },
+                "values": {
+                    "name": "Waarden",
+                    "description": "Optionele lijst met waarden voor de %s-plaatshouders in de query, in de volgorde waarin de plaatshouders voorkomen. Templates behouden hun eigen datatype."
+                },
+                "db4query": {
+                    "name": "Database voor query",
+                    "description": "Overschrijf optioneel de databasenaam voor deze specifieke query."
+                },
+                "config_entry": {
+                    "name": "Verbinding",
+                    "description": "De databaseverbinding waarop deze query wordt uitgevoerd."
+                },
+                "raise_on_error": {
+                    "name": "Fout opwerpen",
+                    "description": "Stop de aanroeper met een fout als het statement mislukt, in plaats van dit in de response te melden als succeeded false. Standaard aan bij deze actie; zet het uit voor het gedrag van Uitvoeren."
+                }
+            }
+        }
+    }
+}

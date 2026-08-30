@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Callable
 from datetime import datetime, time, timedelta
 from decimal import Decimal
@@ -125,10 +123,10 @@ def create_daily_fixed_energy_sensor(
 
 async def create_daily_fixed_energy_power_sensor(
     hass: HomeAssistant,
-    sensor_config: dict,
+    sensor_config: ConfigType,
     source_entity: SourceEntity,
 ) -> VirtualPowerSensor | None:
-    mode_config: dict = sensor_config.get(CONF_DAILY_FIXED_ENERGY)  # type: ignore
+    mode_config: ConfigType = sensor_config.get(CONF_DAILY_FIXED_ENERGY)  # type: ignore
 
     if mode_config.get(CONF_ON_TIME) != timedelta(days=1):
         return None
@@ -241,7 +239,10 @@ class DailyEnergySensor(EnergySensor, RestoreEntity, SensorEntity):
                     self._state,
                 )
                 self.async_schedule_update_ha_state()
-                self._last_updated = dt_util.now().timestamp()
+                # Reuse the timestamp captured by calculate_delta. Reading the clock again here can
+                # cross a whole-second boundary and make the next interval one second too short.
+                assert self._last_delta_calculate is not None
+                self._last_updated = self._last_delta_calculate
 
         self._update_timer_removal = async_track_time_interval(
             self.hass,

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections import defaultdict
 from collections.abc import Mapping
 from copy import deepcopy
@@ -68,8 +66,10 @@ class DeviceType(StrEnum):
 
 
 class DiscoveryBy(StrEnum):
+    CONFIG_ENTRY = "config_entry"
     DEVICE = "device"
     ENTITY = "entity"
+    MANUAL = "manual"
 
 
 @dataclass(frozen=True)
@@ -118,6 +118,22 @@ def _build_domain_device_type_mapping() -> Mapping[str, set[DeviceType]]:
 DOMAIN_DEVICE_TYPE_MAPPING: Mapping[str, set[DeviceType]] = _build_domain_device_type_mapping()
 
 
+def is_device_type_supported_for_entity(device_type: DeviceType | None, entity_entry: RegistryEntry) -> bool:
+    """Check whether a device type can be applied to a given entity.
+
+    Kept module level so discovery can apply it to the device type from the library index,
+    without having to build the full power profile first.
+    """
+    if device_type is None:
+        return False
+
+    # see https://github.com/bramstroker/homeassistant-powercalc/issues/2529
+    if device_type == DeviceType.PRINTER and entity_entry.unit_of_measurement:
+        return False
+
+    return device_type in DOMAIN_DEVICE_TYPE_MAPPING[entity_entry.domain]
+
+
 class PowerProfile:
     def __init__(
         self,
@@ -126,7 +142,7 @@ class PowerProfile:
         model: str,
         directory: str,
         json_data: ConfigType,
-        sub_profiles: list[tuple[str, dict]] | None = None,
+        sub_profiles: list[tuple[str, dict[str, Any]]] | None = None,
     ) -> None:
         self._manufacturer = manufacturer
         self._model = model.replace("#slash#", "/")
@@ -230,9 +246,9 @@ class PowerProfile:
         return config
 
     @property
-    def composite_config(self) -> list | None:
+    def composite_config(self) -> list[ConfigType] | None:
         """Get configuration to set up composite strategy."""
-        return cast(list, self._json_data.get("composite_config"))
+        return cast(list[ConfigType], self._json_data.get("composite_config"))
 
     @property
     def playbook_config(self) -> ConfigType | None:
@@ -356,7 +372,7 @@ class PowerProfile:
             return "remarks_smart_dimmer"
         return None
 
-    async def get_sub_profiles(self) -> list[tuple[str, dict]]:
+    async def get_sub_profiles(self) -> list[tuple[str, dict[str, Any]]]:
         """Get listing of possible sub profiles and their corresponding JSON data."""
         return self._sub_profiles
 
@@ -434,16 +450,7 @@ class PowerProfile:
 
     def is_entity_domain_supported(self, entity_entry: RegistryEntry) -> bool:
         """Check whether this power profile supports a given entity domain."""
-        if self.device_type is None:
-            return False
-
-        domain = entity_entry.domain
-
-        # see https://github.com/bramstroker/homeassistant-powercalc/issues/2529
-        if self.device_type == DeviceType.PRINTER and entity_entry.unit_of_measurement:
-            return False
-
-        return self.device_type in DOMAIN_DEVICE_TYPE_MAPPING[domain]
+        return is_device_type_supported_for_entity(self.device_type, entity_entry)
 
     @property
     def is_custom_profile(self) -> bool:

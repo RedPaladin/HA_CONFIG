@@ -1,0 +1,188 @@
+homeassistant:
+  customize:
+    sensor.energy_charged_into_the_battery:
+      icon: mdi:battery-positive
+      device_class: energy
+      state_class: total
+    sensor.energy_discharged_from_the_battery:
+      icon: mdi:battery-negative
+      device_class: energy
+      state_class: total
+
+sensor:
+  # BATTERY energy tracking
+  - platform: integration
+    name: Energy charged into the battery
+    source: sensor.charge_battery_power
+    unit_prefix: k
+    unit_time: h
+    max_sub_interval:
+      minutes: 5
+  - platform: integration
+    name: Energy discharged from the battery
+    source: sensor.discharge_battery_power
+    unit_prefix: k
+    unit_time: h
+    max_sub_interval:
+      minutes: 5
+
+utility_meter:
+  daily_energy_returned_to_grid:
+    source: sensor.envoy_482329131221_lifetime_net_energy_production # in MWh
+    name: Energy returned to grid
+    cycle: daily
+    tariffs:
+      - high
+      - low
+  daily_energy_grid_consumption:
+    source: sensor.envoy_482329131221_lifetime_net_energy_consumption # in MWh
+    name: Energy grid consumption
+    cycle: daily
+    tariffs:
+      - high
+      - low
+  daily_energy_production:
+    source: sensor.envoy_482329131221_lifetime_energy_production # in MWh
+    name: Energy production in MWh
+    cycle: daily
+    tariffs:
+      - none
+  daily_energy_consumption:
+    source: sensor.envoy_482329131221_lifetime_energy_consumption # in MWh
+    name: Energy consumption
+    cycle: daily
+    tariffs:
+      - none
+
+template:
+  #  Electricity prices (ct/kWh) - EDIT HERE once a year, then reload YAML.
+  #  Source: https://www.yverdon-energies.ch/electricite/
+  - sensor:
+      - name: "Electricity Price Consumption High Tariff"
+        unique_id: electricity_price_consumption_high
+        state: "40.57"
+        unit_of_measurement: "ct/kWh"
+        icon: mdi:currency-usd
+      - name: "Electricity Price Consumption Low Tariff"
+        unique_id: electricity_price_consumption_low
+        state: "30.77"
+        unit_of_measurement: "ct/kWh"
+        icon: mdi:currency-usd
+      - name: "Electricity Price Returned To Grid Tariff"
+        unique_id: electricity_price_returned_to_grid
+        state: "13.70"
+        unit_of_measurement: "ct/kWh"
+        icon: mdi:currency-usd
+
+  #  Water price (CHF/m3) - EDIT HERE once a year, then reload YAML.
+  #  Source: https://www.yverdon-energies.ch/eau/#tarifs-reglements
+  - sensor:
+      - name: "Water Price Consumption Tariff"
+        unique_id: water_price_consumption
+        state: "5.68"
+        unit_of_measurement: "CHF/m³"
+        icon: mdi:currency-usd
+
+  - sensor:
+      - name: "Energy production today"
+        state: "{{ states('sensor.daily_energy_production_none') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:solar-power-variant-outline
+        state_class: total_increasing
+      - name: "Energy consumption today"
+        state: "{{ states('sensor.daily_energy_consumption_none') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:home-lightning-bolt
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy returned to grid high tariff"
+        state: "{{ states('sensor.daily_energy_returned_to_grid_high') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-import
+        state_class: total_increasing
+      - name: "Cost energy returned to grid high tariff"
+        state: "{{ states('sensor.energy_returned_to_grid_high_tariff') | float * states('sensor.electricity_price_returned_to_grid') | float(0) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy returned to grid low tariff"
+        state: "{{ states('sensor.daily_energy_returned_to_grid_low') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-import
+        state_class: total_increasing
+      - name: "Cost energy returned to grid low tariff"
+        state: "{{ states('sensor.energy_returned_to_grid_low_tariff') | float * states('sensor.electricity_price_returned_to_grid') | float(0) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy grid consumption high tariff"
+        state: "{{ states('sensor.daily_energy_grid_consumption_high') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-export
+        state_class: total_increasing
+      - name: "Cost energy grid consumption high tariff"
+        state: "{{ states('sensor.energy_grid_consumption_high_tariff') | float * states('sensor.electricity_price_consumption_high') | float(0) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy grid consumption low tariff"
+        state: "{{ states('sensor.daily_energy_grid_consumption_low') | float * 1000 | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-export
+        state_class: total_increasing
+      - name: "Cost energy grid consumption low tariff"
+        state: "{{ states('sensor.energy_grid_consumption_low_tariff') | float * states('sensor.electricity_price_consumption_low') | float(0) / 100.0 | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Energy returned to grid"
+        state: "{{ (states('sensor.energy_returned_to_grid_high_tariff') | float + states('sensor.energy_returned_to_grid_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-import
+        state_class: total_increasing
+      - name: "Energy grid consumption"
+        state: "{{ (states('sensor.energy_grid_consumption_high_tariff') | float + states('sensor.energy_grid_consumption_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "kWh"
+        icon: mdi:transmission-tower-export
+        state_class: total_increasing
+  - sensor:
+      - name: "Cost energy returned to grid"
+        state: "{{ (0 - states('sensor.cost_energy_returned_to_grid_high_tariff') | float - states('sensor.cost_energy_returned_to_grid_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+      - name: "Cost energy grid consumption"
+        state: "{{ (states('sensor.cost_energy_grid_consumption_high_tariff') | float + states('sensor.cost_energy_grid_consumption_low_tariff') | float) | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+        state_class: total_increasing
+  - sensor:
+      - name: "Total daily cost energy"
+        state: "{{ (states('sensor.cost_energy_grid_consumption') | float + states('sensor.cost_energy_returned_to_grid') | float) | round(2) }}"
+        unit_of_measurement: "CHF"
+        icon: mdi:currency-usd
+  - sensor:
+      - name: "Discharge Battery Power"
+        state: >
+          {% set power =
+            states('sensor.encharge_492529008312_power') | int(0) +
+            states('sensor.encharge_492529008322_power') | int(0)
+          %}
+          {{ 0 if power < 0 else power | abs }}
+        unit_of_measurement: "W"
+        icon: mdi:battery-charging
+        state_class: measurement
+      - name: "Charge Battery Power"
+        state: >
+          {% set power =
+            states('sensor.encharge_492529008312_power') | int(0) +
+            states('sensor.encharge_492529008322_power') | int(0)
+          %}
+          {{ 0 if power > 0 else power | abs }}
+        unit_of_measurement: "W"
+        icon: mdi:battery-charging
+        state_class: measurement

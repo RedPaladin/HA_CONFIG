@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Callable, Iterable, Sequence
 from enum import StrEnum
 import re
@@ -84,7 +82,7 @@ def create_composite_filter(
 
 def create_filter(
     filter_type: str,
-    filter_config: ConfigType | str | list | Template,
+    filter_config: ConfigType | str | list[str] | Template,
     hass: HomeAssistant,
 ) -> EntityFilter:
     filter_mapping: dict[str, Callable[[], EntityFilter]] = {
@@ -172,13 +170,7 @@ class LightGroupFilter(EntityFilter):
     @staticmethod
     def _find_light_group(hass: HomeAssistant, group_entity_id: str) -> Entity | None:
         light_component = cast(EntityComponent, hass.data.get(LIGHT_DOMAIN))
-        return next(
-            filter(
-                lambda entity: entity.entity_id == group_entity_id,
-                light_component.entities,
-            ),
-            None,
-        )
+        return light_component.get_entity(group_entity_id)
 
     def find_all_entity_ids_recursively(
         self,
