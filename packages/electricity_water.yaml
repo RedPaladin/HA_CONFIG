@@ -59,17 +59,17 @@ template:
   #  Source: https://www.yverdon-energies.ch/electricite/
   - sensor:
       - name: "Electricity Price Consumption High Tariff"
-        unique_id: electricity_price_consumption_high
+        unique_id: sensor.electricity_price_consumption_high_tariff
         state: "40.57"
         unit_of_measurement: "ct/kWh"
         icon: mdi:currency-usd
       - name: "Electricity Price Consumption Low Tariff"
-        unique_id: electricity_price_consumption_low
+        unique_id: sensor.electricity_price_consumption_low_tariff
         state: "30.77"
         unit_of_measurement: "ct/kWh"
         icon: mdi:currency-usd
       - name: "Electricity Price Returned To Grid Tariff"
-        unique_id: electricity_price_returned_to_grid
+        unique_id: sensor.electricity_price_returned_to_grid_tariff
         state: "13.70"
         unit_of_measurement: "ct/kWh"
         icon: mdi:currency-usd
@@ -101,7 +101,7 @@ template:
         icon: mdi:transmission-tower-import
         state_class: total_increasing
       - name: "Cost energy returned to grid high tariff"
-        state: "{{ states('sensor.energy_returned_to_grid_high_tariff') | float * states('sensor.electricity_price_returned_to_grid') | float(0) / 100.0 | round(2) }}"
+        state: "{{ states('sensor.energy_returned_to_grid_high_tariff') | float * states('sensor.electricity_price_returned_to_grid_tariff') | float(0) / 100.0 | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
         state_class: total_increasing
@@ -112,7 +112,7 @@ template:
         icon: mdi:transmission-tower-import
         state_class: total_increasing
       - name: "Cost energy returned to grid low tariff"
-        state: "{{ states('sensor.energy_returned_to_grid_low_tariff') | float * states('sensor.electricity_price_returned_to_grid') | float(0) / 100.0 | round(2) }}"
+        state: "{{ states('sensor.energy_returned_to_grid_low_tariff') | float * states('sensor.electricity_price_returned_to_grid_tariff') | float(0) / 100.0 | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
         state_class: total_increasing
@@ -123,7 +123,7 @@ template:
         icon: mdi:transmission-tower-export
         state_class: total_increasing
       - name: "Cost energy grid consumption high tariff"
-        state: "{{ states('sensor.energy_grid_consumption_high_tariff') | float * states('sensor.electricity_price_consumption_high') | float(0) / 100.0 | round(2) }}"
+        state: "{{ states('sensor.energy_grid_consumption_high_tariff') | float * states('sensor.electricity_price_consumption_high_tariff') | float(0) / 100.0 | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
         state_class: total_increasing
@@ -134,7 +134,7 @@ template:
         icon: mdi:transmission-tower-export
         state_class: total_increasing
       - name: "Cost energy grid consumption low tariff"
-        state: "{{ states('sensor.energy_grid_consumption_low_tariff') | float * states('sensor.electricity_price_consumption_low') | float(0) / 100.0 | round(2) }}"
+        state: "{{ states('sensor.energy_grid_consumption_low_tariff') | float * states('sensor.electricity_price_consumption_low_tariff') | float(0) / 100.0 | round(2) }}"
         unit_of_measurement: "CHF"
         icon: mdi:currency-usd
         state_class: total_increasing

@@ -117,59 +117,59 @@ automation:
     alias: Import SEY all data of Water/Energy
     description: ""
     trigger:
-      - platform: time
-        at: "05:15:00"
+      - platform: time_pattern
+        minutes: 5
     condition: []
     action:
       - service: script.import_sey_data
         data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-data-high-tariff.tsv'
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-consumption-data-high-tariff.tsv'
           folder: "data"
           import_data: true
       - service: script.import_sey_data
         data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-data-low-tariff.tsv'
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-consumption-data-low-tariff.tsv'
           folder: "data"
           import_data: true
       - service: script.import_sey_data
         data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-cost-high-tariff.tsv'
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-consumption-cost-high-tariff.tsv'
           folder: "data"
           import_data: true
       - service: script.import_sey_data
         data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-consumption-cost-low-tariff.tsv'
-          folder: "data"
-          import_data: true
-
-      - service: script.import_sey_data
-        data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-data-high-tariff.tsv'
-          folder: "data"
-          import_data: true
-      - service: script.import_sey_data
-        data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-data-low-tariff.tsv'
-          folder: "data"
-          import_data: true
-      - service: script.import_sey_data
-        data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-cost-high-tariff.tsv'
-          folder: "data"
-          import_data: true
-      - service: script.import_sey_data
-        data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-energy-production-cost-low-tariff.tsv'
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-consumption-cost-low-tariff.tsv'
           folder: "data"
           import_data: true
 
       - service: script.import_sey_data
         data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-water-consumption-data.tsv'
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-production-data-high-tariff.tsv'
           folder: "data"
           import_data: true
       - service: script.import_sey_data
         data:
-          filename: '{{ (now() - timedelta(days=2)).strftime("%Y%m%d") }}-water-consumption-cost.tsv'
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-production-data-low-tariff.tsv'
+          folder: "data"
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-production-cost-high-tariff.tsv'
+          folder: "data"
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-energy-production-cost-low-tariff.tsv'
+          folder: "data"
+          import_data: true
+
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-water-consumption-data.tsv'
+          folder: "data"
+          import_data: true
+      - service: script.import_sey_data
+        data:
+          filename: '{{ (now() - timedelta(days=7)).strftime("%Y%m%d") }}-water-consumption-cost.tsv'
           folder: "data"
           import_data: true
